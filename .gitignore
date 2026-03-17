@@ -19,10 +19,10 @@ dist/
 venv/
 env/
 
-# === Node / React ===
+# === Node / Next.js ===
 node_modules/
-src/frontend/build/
-src/frontend/dist/
+src/frontend/.next/
+src/frontend/out/
 .env
 .env.local
 
