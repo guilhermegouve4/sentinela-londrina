@@ -12,7 +12,7 @@ Monitora casos de Dengue, Zika e Chikungunya por região de Londrina com base no
 ## Equipe
 | Nome | GitHub | Responsabilidade |
 |------|--------|-----------------|
-| Guilherme | @guilhermegouve4 | Backend C++, gestão, ABNT |
+| Guilherme | @guilhermegouve4 | Backend C++ |
 | Pedro | @Pedrinho46 | Parser Python |
 | Gabriel | @gcastrodev | Frontend Next.js |
 | Alan | @alanrossinedev | Frontend Next.js |
