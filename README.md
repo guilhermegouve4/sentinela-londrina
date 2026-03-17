@@ -1,22 +1,71 @@
-# sentinela-londrina
-Sistema de monitoramento de arboviroses em Londrina — AEP Unicesumar 2026
+# 🦟 Sentinela Londrina
 
-## Sobre
-Monitora casos de Dengue, Zika e Chikungunya por região de Londrina com base nos boletins epidemiológicos semanais da prefeitura.
+> Sistema de monitoramento de arboviroses (Dengue, Zika, Chikungunya) usando dados abertos da prefeitura de Londrina.
+
+**AEP — Unicesumar 2026 | Análise e Desenvolvimento de Sistemas — 3ª Série**
+
+---
+
+## Sobre o Projeto
+
+A Secretaria Municipal de Saúde de Londrina publica periodicamente boletins epidemiológicos com dados de Dengue, Zika e Chikungunya. Este sistema atua como uma camada de inteligência sobre esses dados: minerando, organizando e gerando relatórios situacionais por região.
+
+### O que o sistema faz
+
+- **Ingere** dados extraídos dos boletins epidemiológicos (CSV)
+- **Organiza** em listas encadeadas dinâmicas por região e cronologia
+- **Analisa** taxas de incidência, índice LIRAa e crescimento entre boletins
+- **Apresenta** dashboard visual com filtros por localidade
 
 ## Stack
-- **Backend**: C++ (lista encadeada manual, POO)
-- **Parser**: Python (extração de PDFs → CSV)
-- **Frontend**: Next.js (dashboard de visualização)
 
-## Equipe
-| Nome | GitHub | Responsabilidade |
-|------|--------|-----------------|
-| Guilherme | @guilhermegouve4 | Backend C++ |
-| Pedro | @Pedrinho46 | Parser Python |
-| Gabriel | @gcastrodev | Frontend Next.js |
-| Alan | @alanrossinedev | Frontend Next.js |
+| Camada | Tecnologia | Responsável |
+|--------|-----------|-------------|
+| Backend | C++ (POO, lista encadeada manual) | Guilherme, Pedro |
+| Parser | Python (extração de boletins → CSV) | Pedro |
+| Frontend | React (dashboard) | Gabriel, Alan |
+
+## Estrutura do Repositório
+
+```
+sentinela-londrina/
+├── src/
+│   ├── cpp/            # Backend C++
+│   ├── parser/         # Scripts Python de extração
+│   └── frontend/       # React app
+├── data/
+│   ├── raw/            # Boletins PDF originais
+│   ├── mock/           # CSVs de desenvolvimento
+│   └── processed/      # CSVs gerados pelo parser
+├── docs/
+│   ├── ROADMAP_1BIM.md
+│   ├── contrato-csv.md
+│   └── documento-abnt/
+├── CLAUDE.md
+└── .gitignore
+```
 
 ## Prazos
-- **06/04/2026** — Entrega parcial (1º bim)
-- **08/06/2026** — Entrega final (2º bim)
+
+| Entrega | Data | Status |
+|---------|------|--------|
+| Parcial (1º bim) | 06/04/2026 | 🔴 Em andamento |
+| Final (2º bim) | 08/06/2026 | ⚪ Não iniciada |
+
+## Como rodar
+
+> Em breve.
+
+## Equipe
+
+| Nome | Papel |
+|------|-------|
+| Guilherme | Backend C++|
+| Pedro | Parser Python |
+| Gabriel | Frontend React |
+| Alan | Frontend React |
+
+## Fontes de Dados
+
+- [Blog da Prefeitura de Londrina — Aedes aegypti](https://blog.londrina.pr.gov.br/?tag=aedes-aegypti)
+- [SESA Paraná — Boletins da Dengue](https://www.dengue.pr.gov.br/Pagina/Boletins-da-Dengue)

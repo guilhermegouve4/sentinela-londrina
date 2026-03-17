@@ -1,6 +1,6 @@
 # STATUS — AEP Sentinela Londrina
 
-> Última atualização: 16/03/2026
+> Última atualização: 17/03/2026
 
 ## FASE ATUAL
 Planejamento concluído. Issues criadas no GitHub. Zero código produzido.
@@ -34,11 +34,13 @@ Planejamento concluído. Issues criadas no GitHub. Zero código produzido.
 | 004 | CSV como formato intermediário Python → C++ | 16/03/2026 |
 | 005 | Frontend em Next.js | 16/03/2026 |
 | 006 | C++ gera resultado.json, Next.js consome estático | 16/03/2026 |
-| 007 | calcularRisco() usa taxa de positividade (confirmados/notificados) | 16/03/2026 |
-| 008 | DistritoRural usa fator 1.5 de subnotificação no risco | 16/03/2026 |
+| 007 | calculateRisk() usa taxa de positividade (confirmed/notified) | 16/03/2026 |
+| 008 | RuralDistrict usa fator 1.5 de subnotificação no risco | 16/03/2026 |
 | 009 | LIRAa removido — não consta nos boletins disponíveis | 16/03/2026 |
+| 010 | Classes, métodos e atributos em inglês; texto de documentação e comentários em português | 17/03/2026 |
 
 ## LOG DE MUDANÇAS
 
 - **16/03/2026** — Sessão 0: definido stack, equipe, prazos, decisões iniciais
 - **16/03/2026** — Sessão 1: revisão completa das issues, definição de atributos e fórmulas
+- **17/03/2026** — Sessão 2: início da implementação C++; decisão de padronizar código em inglês; frontend movido para src/frontend/; issues e project atualizados
