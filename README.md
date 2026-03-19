@@ -32,7 +32,7 @@ sentinela-londrina/
 ├── src/
 │   ├── cpp/            # Backend C++
 │   ├── parser/         # Scripts Python de extração
-│   └── frontend/       # React app
+│   └── frontend/       # Next.js app
 ├── data/
 │   ├── raw/            # Boletins PDF originais
 │   ├── mock/           # CSVs de desenvolvimento
