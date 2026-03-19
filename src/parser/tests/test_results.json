@@ -1,0 +1,106 @@
+{
+    "pdfplumber": {
+        "time": 0.9165918827056885,
+        "pages": [
+            {
+                "page": 1,
+                "text_len": 132,
+                "tables_count": 0
+            },
+            {
+                "page": 2,
+                "text_len": 385,
+                "tables_count": 0
+            },
+            {
+                "page": 3,
+                "text_len": 1994,
+                "tables_count": 0
+            },
+            {
+                "page": 4,
+                "text_len": 1051,
+                "tables_count": 0
+            },
+            {
+                "page": 5,
+                "text_len": 1828,
+                "tables_count": 0
+            },
+            {
+                "page": 6,
+                "text_len": 955,
+                "tables_count": 0
+            },
+            {
+                "page": 7,
+                "text_len": 1979,
+                "tables_count": 0
+            },
+            {
+                "page": 8,
+                "text_len": 2004,
+                "tables_count": 0
+            },
+            {
+                "page": 9,
+                "text_len": 2268,
+                "tables_count": 0
+            },
+            {
+                "page": 10,
+                "text_len": 767,
+                "tables_count": 0
+            }
+        ]
+    },
+    "pymupdf": {
+        "time": 0.023494243621826172,
+        "pages": [
+            {
+                "page": 1,
+                "text_len": 147
+            },
+            {
+                "page": 2,
+                "text_len": 439
+            },
+            {
+                "page": 3,
+                "text_len": 2091
+            },
+            {
+                "page": 4,
+                "text_len": 1141
+            },
+            {
+                "page": 5,
+                "text_len": 1983
+            },
+            {
+                "page": 6,
+                "text_len": 1036
+            },
+            {
+                "page": 7,
+                "text_len": 2136
+            },
+            {
+                "page": 8,
+                "text_len": 2114
+            },
+            {
+                "page": 9,
+                "text_len": 2436
+            },
+            {
+                "page": 10,
+                "text_len": 818
+            }
+        ]
+    },
+    "pdfminer": {
+        "time": 0.21809029579162598,
+        "total_text_len": 12217
+    }
+}
