@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 
 class WeeklyBulletin;
@@ -13,4 +14,5 @@ class Locality{
         virtual double calculateRisk() = 0;
         std::string getName();
         void setName(std::string name);
+        virtual ~Locality();
 };

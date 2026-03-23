@@ -62,8 +62,8 @@ sentinela-londrina/
 |------|-------|
 | Guilherme | Backend C++|
 | Pedro | Parser Python |
-| Gabriel | Frontend React |
-| Alan | Frontend React |
+| Gabriel | Frontend Next.js |
+| Alan | Frontend Next.js |
 
 ## Fontes de Dados
 
