@@ -3,7 +3,11 @@
 > Última atualização: 23/03/2026
 
 ## FASE ATUAL
-Implementação C++ iniciada. Issues #1 e #20 concluídas. Issue #2 concluída.
+
+Implementação C++ em andamento. Classes base do backend concluídas (#1 Locality, #2 Node). Contrato CSV definido (#20). Próximo passo: WeeklyBulletin (#5).
+
+1º Bim (06/04): 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 20%
+2º Bim (08/06): ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜  0%
 
 ## PRAZOS
 
