@@ -1,27 +1,27 @@
 # STATUS — AEP Sentinela Londrina
 
-> Última atualização: 17/03/2026
+> Última atualização: 23/03/2026
 
 ## FASE ATUAL
-Planejamento concluído. Issues criadas no GitHub. Zero código produzido.
+Implementação C++ iniciada. Issues #1 e #20 concluídas. Issue #2 concluída.
 
 ## PRAZOS
 
 | Entrega | Data | Status |
 |---------|------|--------|
-| Parcial (1º bim) | 06/04/2026 | NÃO INICIADA |
+| Parcial (1º bim) | 06/04/2026 | EM ANDAMENTO |
 | Final (2º bim) | 08/06/2026 | NÃO INICIADA |
 
 ## ENTREGÁVEIS DO 1º BIMESTRE
 
 | Item | Responsável | Issue | Status |
 |------|-------------|-------|--------|
-| Contrato CSV | Guilherme + Pedro | #20 | Pendente |
+| Contrato CSV | Guilherme + Pedro | #20 | ✅ Concluído |
 | Diagrama de Classes UML | Guilherme | #10 | Pendente |
-| Lista Encadeada (C++) | Guilherme | #1–#7 | Pendente |
+| Lista Encadeada (C++) | Guilherme | #1–#7 | Em andamento |
 | Parser/Extração (Python) | Pedro | #8 | Pendente |
 | Coleta manual dos boletins | Pedro | — | Pendente |
-| Wireframes | Gabriel + Alan | #9 | Pendente |
+| Wireframes | Gabriel + Alan | #9 | ✅ Concluído |
 | Documento ABNT parcial | Grupo | #11 | Pendente |
 
 ## DECISÕES DE ARQUITETURA
@@ -44,3 +44,5 @@ Planejamento concluído. Issues criadas no GitHub. Zero código produzido.
 - **16/03/2026** — Sessão 0: definido stack, equipe, prazos, decisões iniciais
 - **16/03/2026** — Sessão 1: revisão completa das issues, definição de atributos e fórmulas
 - **17/03/2026** — Sessão 2: início da implementação C++; decisão de padronizar código em inglês; frontend movido para src/frontend/; issues e project atualizados
+- **19/03/2026** — Sessão 3: pesquisa de fonte de dados e benchmark de bibliotecas PDF (Gabriel); wireframes do dashboard concluídos (Gabriel + Alan)
+- **23/03/2026** — Sessão 4: implementação de Locality.h e Locality.cpp (#1 concluída); criação do contrato-csv.md (#20 concluída); implementação de Node.h (#2 concluída); configuração do markdownlint
