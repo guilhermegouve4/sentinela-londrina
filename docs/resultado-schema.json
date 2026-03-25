@@ -1,0 +1,315 @@
+{
+  "_comentario": "Schema do resultado.json — gerado pelo C++ e consumido pelo Next.js",
+  "_versao": "1.0",
+  "_gerado_em": "2026-03-24T00:00:00Z",
+
+  "meta": {
+    "generated_at": "2026-03-24T10:30:00Z",
+    "source_file": "boletim_londrina.csv",
+    "period": {
+      "week_start": "01/2026",
+      "week_end": "12/2026"
+    },
+    "municipality": "Londrina",
+    "population": 555965
+  },
+
+  "summary": {
+    "total_notified": 3807,
+    "total_confirmed": 295,
+    "total_discarded": 2570,
+    "total_under_analysis": 942,
+    "total_deaths": 0,
+    "total_zika": 0,
+    "total_chikungunya": 0,
+    "critical_regions": 2,
+    "alert_regions": 2,
+    "normal_regions": 2
+  },
+
+  "regions": [
+    {
+      "name": "Norte",
+      "type": "urban",
+      "confirmed": 245,
+      "notified": 320,
+      "discarded": 60,
+      "under_analysis": 15,
+      "dengue_cases": 245,
+      "dengue_alarm_cases": 18,
+      "dengue_severe_cases": 3,
+      "zika_cases": 0,
+      "chikungunya_cases": 0,
+      "deaths": 2,
+      "risk": 4.2,
+      "status": "critical",
+      "progress_pct": 84
+    },
+    {
+      "name": "Sul",
+      "type": "urban",
+      "confirmed": 189,
+      "notified": 248,
+      "discarded": 47,
+      "under_analysis": 12,
+      "dengue_cases": 189,
+      "dengue_alarm_cases": 12,
+      "dengue_severe_cases": 1,
+      "zika_cases": 0,
+      "chikungunya_cases": 0,
+      "deaths": 1,
+      "risk": 3.8,
+      "status": "alert",
+      "progress_pct": 76
+    },
+    {
+      "name": "Leste",
+      "type": "urban",
+      "confirmed": 156,
+      "notified": 205,
+      "discarded": 38,
+      "under_analysis": 11,
+      "dengue_cases": 156,
+      "dengue_alarm_cases": 9,
+      "dengue_severe_cases": 0,
+      "zika_cases": 0,
+      "chikungunya_cases": 0,
+      "deaths": 0,
+      "risk": 2.9,
+      "status": "alert",
+      "progress_pct": 58
+    },
+    {
+      "name": "Oeste",
+      "type": "urban",
+      "confirmed": 134,
+      "notified": 176,
+      "discarded": 33,
+      "under_analysis": 9,
+      "dengue_cases": 134,
+      "dengue_alarm_cases": 7,
+      "dengue_severe_cases": 0,
+      "zika_cases": 0,
+      "chikungunya_cases": 0,
+      "deaths": 0,
+      "risk": 2.5,
+      "status": "alert",
+      "progress_pct": 50
+    },
+    {
+      "name": "Central",
+      "type": "urban",
+      "confirmed": 98,
+      "notified": 128,
+      "discarded": 24,
+      "under_analysis": 6,
+      "dengue_cases": 98,
+      "dengue_alarm_cases": 4,
+      "dengue_severe_cases": 0,
+      "zika_cases": 0,
+      "chikungunya_cases": 0,
+      "deaths": 0,
+      "risk": 1.8,
+      "status": "normal",
+      "progress_pct": 36
+    },
+    {
+      "name": "Rural",
+      "type": "rural",
+      "confirmed": 67,
+      "notified": 88,
+      "discarded": 16,
+      "under_analysis": 5,
+      "dengue_cases": 67,
+      "dengue_alarm_cases": 2,
+      "dengue_severe_cases": 0,
+      "zika_cases": 0,
+      "chikungunya_cases": 0,
+      "deaths": 0,
+      "risk": 1.2,
+      "status": "normal",
+      "progress_pct": 24
+    }
+  ],
+
+  "weekly_series": [
+    {
+      "week": "01/2026",
+      "date_range": "29/12/2025-04/01/2026",
+      "total_confirmed": 52,
+      "total_notified": 68,
+      "total_deaths": 0,
+      "by_region": [
+        { "region": "Norte",   "confirmed": 18, "notified": 24, "risk": 1.1, "status": "normal" },
+        { "region": "Sul",     "confirmed": 12, "notified": 16, "risk": 0.9, "status": "normal" },
+        { "region": "Leste",   "confirmed": 9,  "notified": 12, "risk": 0.7, "status": "normal" },
+        { "region": "Oeste",   "confirmed": 7,  "notified": 9,  "risk": 0.6, "status": "normal" },
+        { "region": "Central", "confirmed": 4,  "notified": 5,  "risk": 0.4, "status": "normal" },
+        { "region": "Rural",   "confirmed": 2,  "notified": 2,  "risk": 0.2, "status": "normal" }
+      ]
+    },
+    {
+      "week": "02/2026",
+      "date_range": "05/01/2026-11/01/2026",
+      "total_confirmed": 68,
+      "total_notified": 89,
+      "total_deaths": 0,
+      "by_region": [
+        { "region": "Norte",   "confirmed": 25, "notified": 33, "risk": 1.5, "status": "normal" },
+        { "region": "Sul",     "confirmed": 16, "notified": 21, "risk": 1.2, "status": "normal" },
+        { "region": "Leste",   "confirmed": 11, "notified": 14, "risk": 0.9, "status": "normal" },
+        { "region": "Oeste",   "confirmed": 9,  "notified": 12, "risk": 0.7, "status": "normal" },
+        { "region": "Central", "confirmed": 5,  "notified": 6,  "risk": 0.5, "status": "normal" },
+        { "region": "Rural",   "confirmed": 2,  "notified": 3,  "risk": 0.2, "status": "normal" }
+      ]
+    },
+    {
+      "week": "12/2026",
+      "date_range": "18/03/2026-24/03/2026",
+      "total_confirmed": 295,
+      "total_notified": 389,
+      "total_deaths": 2,
+      "by_region": [
+        { "region": "Norte",   "confirmed": 67, "notified": 89, "risk": 4.2, "status": "critical" },
+        { "region": "Sul",     "confirmed": 54, "notified": 71, "risk": 3.8, "status": "critical" },
+        { "region": "Leste",   "confirmed": 43, "notified": 57, "risk": 2.9, "status": "alert" },
+        { "region": "Oeste",   "confirmed": 38, "notified": 50, "risk": 2.5, "status": "alert" },
+        { "region": "Central", "confirmed": 32, "notified": 42, "risk": 1.8, "status": "normal" },
+        { "region": "Rural",   "confirmed": 19, "notified": 25, "risk": 1.2, "status": "normal" }
+      ]
+    }
+  ],
+
+  "alerts": [
+    {
+      "region": "Norte",
+      "level": "critical",
+      "message": "LIRAa ultrapassou 4.0% — Risco de proliferação alto",
+      "triggered_at": "2026-03-17T14:32:00Z"
+    },
+    {
+      "region": "Sul",
+      "level": "critical",
+      "message": "Taxa de crescimento acima de 15% na última semana",
+      "triggered_at": "2026-03-17T09:15:00Z"
+    },
+    {
+      "region": "Leste",
+      "level": "alert",
+      "message": "Aproximação do limite crítico — LIRAa em 2.9%",
+      "triggered_at": "2026-03-16T16:45:00Z"
+    },
+    {
+      "region": "Oeste",
+      "level": "alert",
+      "message": "Aumento gradual de casos nas últimas 3 semanas",
+      "triggered_at": "2026-03-15T11:20:00Z"
+    }
+  ],
+
+  "ubs_hierarchy": [
+    {
+      "name": "Sede Regional Londrina",
+      "type": "sede",
+      "children": [
+        {
+          "name": "Região Urbana Norte",
+          "type": "region",
+          "confirmed": 245,
+          "status": "critical",
+          "children": [
+            {
+              "name": "UBS Cinco Conjuntos",
+              "type": "ubs",
+              "confirmed": 89,
+              "status": "critical",
+              "children": [
+                { "name": "Cinco Conjuntos", "type": "bairro", "confirmed": 52, "status": "critical" },
+                { "name": "Maravilha",        "type": "bairro", "confirmed": 37, "status": "critical" }
+              ]
+            },
+            {
+              "name": "UBS União da Vitória",
+              "type": "ubs",
+              "confirmed": 67,
+              "status": "critical",
+              "children": [
+                { "name": "União da Vitória", "type": "bairro", "confirmed": 67, "status": "critical" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Região Urbana Sul",
+          "type": "region",
+          "confirmed": 189,
+          "status": "critical",
+          "children": [
+            {
+              "name": "UBS Jardim do Sol",
+              "type": "ubs",
+              "confirmed": 112,
+              "status": "critical",
+              "children": [
+                { "name": "Jardim do Sol", "type": "bairro", "confirmed": 112, "status": "critical" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Região Urbana Centro",
+          "type": "region",
+          "confirmed": 98,
+          "status": "normal",
+          "children": [
+            {
+              "name": "UBS Centro",
+              "type": "ubs",
+              "confirmed": 98,
+              "status": "normal",
+              "children": [
+                { "name": "Centro",   "type": "bairro", "confirmed": 56, "status": "normal" },
+                { "name": "Catedral", "type": "bairro", "confirmed": 42, "status": "normal" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Distrito Rural",
+          "type": "region",
+          "confirmed": 67,
+          "status": "normal",
+          "children": [
+            {
+              "name": "UBS Warta",
+              "type": "ubs",
+              "confirmed": 38,
+              "status": "normal",
+              "children": [
+                { "name": "Warta", "type": "bairro", "confirmed": 38, "status": "normal" }
+              ]
+            },
+            {
+              "name": "UBS Lerroville",
+              "type": "ubs",
+              "confirmed": 29,
+              "status": "normal",
+              "children": [
+                { "name": "Lerroville", "type": "bairro", "confirmed": 29, "status": "normal" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "status_history": [
+    { "region": "Norte",   "status": "critical", "since": "2026-02-25", "days_in_status": 20 },
+    { "region": "Sul",     "status": "critical", "since": "2026-03-04", "days_in_status": 13 },
+    { "region": "Leste",   "status": "alert",    "since": "2026-03-11", "days_in_status": 6  },
+    { "region": "Oeste",   "status": "alert",    "since": "2026-03-15", "days_in_status": 2  },
+    { "region": "Central", "status": "normal",   "since": null,         "days_in_status": null },
+    { "region": "Rural",   "status": "normal",   "since": null,         "days_in_status": null }
+  ]
+}
