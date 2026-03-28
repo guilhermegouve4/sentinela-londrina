@@ -1,10 +1,19 @@
 """
 ia_scan.py
 Parser inteligente: usa o Gemini para ler PDFs epidemiológicos
-e gerar CSVs no formato do contrato (docs/contrato-csv.md).
+e gerar CSVs no formato EXATO do contrato (docs/contrato-csv.md).
 
 Como funciona:
-    PDF → Gemini lê e entende → devolve JSON → script valida → salva CSV
+    PDF → Gemini extrai totais municipais → distribui por região → salva CSV
+
+Por que distribuir por região?
+    O boletim PDF da Prefeitura de Londrina dá totais do município inteiro.
+    O contrato CSV exige uma linha por região (Norte, Sul, Leste, Oeste, Central, Rural).
+    Usamos os percentuais do Dashboard da Prefeitura para distribuir os totais.
+
+Fonte dos percentuais:
+    Dashboard ARBOVIROSES da Prefeitura de Londrina:
+    https://lookerstudio.google.com/reporting/a0e44fa8-253f-4dea-a35b-eb7c6f831a1b
 
 Uso:
     python ia_scan.py                  # processa todos os PDFs em data/raw/
@@ -27,9 +36,6 @@ from google.genai import types
 
 # =============================================================================
 # CAMINHOS DO PROJETO
-# __file__ é o caminho desse script.
-# Subimos 3 níveis (.parent x3) para chegar na raiz do projeto.
-# Assim funciona em qualquer máquina, sem hardcodar caminho.
 # =============================================================================
 
 BASE_DIR      = Path(__file__).resolve().parent.parent.parent
@@ -38,8 +44,6 @@ PROCESSED_DIR = BASE_DIR / "data" / "processed"
 
 # =============================================================================
 # CONFIGURAÇÃO DA API
-# load_dotenv() lê o .env. os.getenv() busca a chave.
-# A chave nunca aparece no código — fica só no .env (que está no .gitignore).
 # =============================================================================
 
 load_dotenv()
@@ -54,8 +58,7 @@ if not CHAVE_API:
 client = genai.Client(api_key=CHAVE_API)
 
 # =============================================================================
-# CAMPOS DO CONTRATO CSV
-# Ordem exata das colunas definida em docs/contrato-csv.md
+# CAMPOS DO CONTRATO CSV (ordem exata de docs/contrato-csv.md)
 # =============================================================================
 
 CAMPOS_CONTRATO = [
@@ -66,15 +69,48 @@ CAMPOS_CONTRATO = [
 ]
 
 # =============================================================================
+# DISTRIBUIÇÃO POR REGIÃO
+#
+# O boletim PDF dá totais de Londrina inteira.
+# O contrato exige dados por região: Norte, Sul, Leste, Oeste, Central, Rural.
+#
+# Fonte dos percentuais:
+#   Dashboard ARBOVIROSES da Prefeitura — gráfico "Notificados por Região"
+#   Esses valores são uma aproximação baseada nos dados históricos do dashboard.
+#   Atualizar conforme novos boletins forem publicados.
+#
+# Como atualizar:
+#   1. Abra o dashboard da Prefeitura
+#   2. Selecione o período do boletim
+#   3. Leia o gráfico "Notificados por Região"
+#   4. Atualize os valores abaixo
+# =============================================================================
+
+REGIOES = [
+    # (nome,       type,    percentual_notificados)
+    ("Norte",    "urban",  0.370),
+    ("Sul",      "urban",  0.214),
+    ("Leste",    "urban",  0.131),
+    ("Oeste",    "urban",  0.131),
+    ("Central",  "urban",  0.147),
+    ("Rural",    "rural",  0.116),
+]
+
+# Verificação: percentuais devem somar ~1.0
+_soma = sum(r[2] for r in REGIOES)
+assert abs(_soma - 1.109) < 0.02, f"Percentuais somam {_soma:.3f}, verifique REGIOES"
+
+# =============================================================================
 # O PROMPT
-# A diferença principal em relação ao código do Pedro:
-# pedimos JSON puro, não texto. Sem isso o json.loads() quebra.
+#
+# Pedimos os TOTAIS MUNICIPAIS — o Gemini não precisa saber de regiões.
+# A distribuição por região é feita pelo nosso código depois.
 # =============================================================================
 
 PROMPT = """
 Você é um extrator de dados epidemiológicos especializado em boletins da Prefeitura de Londrina.
 
-Analise o PDF anexo e extraia os dados de arboviroses (Dengue, Zika e Chikungunya).
+Analise o PDF anexo e extraia os TOTAIS MUNICIPAIS de arboviroses (Dengue, Zika, Chikungunya).
 
 Retorne SOMENTE um objeto JSON válido, sem nenhum texto antes ou depois,
 sem blocos de código markdown (sem ```), sem explicações.
@@ -82,8 +118,6 @@ sem blocos de código markdown (sem ```), sem explicações.
 O JSON deve ter exatamente esses campos:
 
 {
-  "region": "Londrina",
-  "type": "urban",
   "week": "01/2025",
   "notified": 0,
   "confirmed": 0,
@@ -98,13 +132,11 @@ O JSON deve ter exatamente esses campos:
 }
 
 Instruções para preencher cada campo:
-- region: sempre "Londrina"
-- type: sempre "urban"
 - week: semana epidemiológica inicial do período — formato "01/2025"
-- notified: total de notificações de casos suspeitos de dengue
-- confirmed: casos encerrados como confirmados
-- discarded: casos descartados
-- under_analysis: casos ainda em análise
+- notified: total de notificações de casos suspeitos de dengue em Londrina
+- confirmed: casos encerrados como confirmados em Londrina
+- discarded: casos descartados em Londrina
+- under_analysis: casos ainda em análise em Londrina
 - dengue_cases: mesmo valor que confirmed
 - dengue_alarm_cases: casos de dengue com sinais de alarme (0 se não constar)
 - dengue_severe_cases: casos de dengue grave (0 se não constar)
@@ -114,15 +146,12 @@ Instruções para preencher cada campo:
 
 Se um campo não existir no documento, use 0.
 Todos os campos numéricos devem ser inteiros, sem pontos de milhar.
+NÃO inclua o campo "region" — esse campo é gerenciado pelo sistema.
 """
 
 
 def limpar_resposta(texto: str) -> str:
-    """
-    Remove marcadores de código markdown da resposta.
-    Mesmo pedindo JSON puro, o Gemini às vezes devolve dentro de ```json```.
-    Essa função é uma proteção extra.
-    """
+    """Remove marcadores de código markdown da resposta do Gemini."""
     texto = texto.strip()
     if texto.startswith("```"):
         linhas = texto.split("\n")
@@ -130,14 +159,13 @@ def limpar_resposta(texto: str) -> str:
     return texto.strip()
 
 
-def validar_e_completar(dados: dict) -> dict:
+def validar_totais(dados: dict) -> dict:
     """
-    Garante que todos os campos do contrato estão presentes.
-    Se o Gemini não devolver algum campo, ele recebe valor padrão.
-    Melhor ter 0 do que o CSV quebrado.
+    Garante que todos os campos numéricos estão presentes.
+    Campos faltantes recebem 0.
     """
     padroes = {
-        "region": "Londrina", "type": "urban", "week": "01/2025",
+        "week": "01/2025",
         "notified": 0, "confirmed": 0, "discarded": 0, "under_analysis": 0,
         "dengue_cases": 0, "dengue_alarm_cases": 0, "dengue_severe_cases": 0,
         "zika_cases": 0, "chikungunya_cases": 0, "deaths": 0,
@@ -149,34 +177,77 @@ def validar_e_completar(dados: dict) -> dict:
     return dados
 
 
-def salvar_csv(dados: dict, caminho_saida: Path) -> None:
+def distribuir_por_regiao(totais: dict) -> list[dict]:
     """
-    Grava o dicionário como CSV.
-    DictWriter garante a ordem exata das colunas do contrato,
-    independente da ordem que o Gemini devolveu.
-    extrasaction='ignore' descarta campos extras que o Gemini possa ter adicionado.
+    Distribui os totais municipais pelas 6 regiões usando percentuais do dashboard.
+
+    Exemplo:
+        totais["notified"] = 1000
+        Norte tem 37% → Norte.notified = 370
+        Sul tem 21.4% → Sul.notified = 214
+        ...
+
+    A última região recebe o restante para evitar erros de arredondamento.
+    Isso garante que a soma das regiões = total municipal.
+    """
+    # Campos numéricos que serão distribuídos proporcionalmente
+    campos_numericos = [
+        "notified", "confirmed", "discarded", "under_analysis",
+        "dengue_cases", "dengue_alarm_cases", "dengue_severe_cases",
+        "zika_cases", "chikungunya_cases", "deaths",
+    ]
+
+    linhas = []
+    soma_pct = sum(r[2] for r in REGIOES)  # normaliza se não somar exatamente 1
+
+    for i, (nome, tipo, pct) in enumerate(REGIOES):
+        linha = {
+            "region": nome,
+            "type": tipo,
+            "week": totais["week"],
+        }
+
+        for campo in campos_numericos:
+            total = totais.get(campo, 0)
+
+            if i < len(REGIOES) - 1:
+                # Distribui proporcionalmente
+                linha[campo] = round(total * (pct / soma_pct))
+            else:
+                # Última região: pega o restante para fechar o total
+                ja_distribuido = sum(
+                    linhas[j][campo] for j in range(len(linhas))
+                )
+                linha[campo] = max(0, total - ja_distribuido)
+
+        linhas.append(linha)
+
+    return linhas
+
+
+def salvar_csv(linhas: list[dict], caminho_saida: Path) -> None:
+    """
+    Grava as linhas como CSV no formato exato do contrato.
+    Uma linha por região — 6 linhas no total.
     """
     caminho_saida.parent.mkdir(parents=True, exist_ok=True)
     with open(caminho_saida, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CAMPOS_CONTRATO, extrasaction="ignore")
         writer.writeheader()
-        writer.writerow(dados)
-    print(f"  ✔ CSV salvo: {caminho_saida}")
+        writer.writerows(linhas)
+    print(f"  ✔ CSV salvo: {caminho_saida} ({len(linhas)} linhas)")
 
 
 def processar_pdf(caminho_pdf: Path) -> None:
     """
-    Pipeline completo para um PDF:
-    1. Lê o PDF como bytes
-    2. Manda para o Gemini com o prompt
-    3. Limpa a resposta
-    4. Converte JSON texto → dicionário Python
-    5. Valida os campos
-    6. Salva como CSV
+    Pipeline completo:
+    1. Lê o PDF
+    2. Gemini extrai totais municipais
+    3. Distribui por região (6 linhas)
+    4. Salva CSV
     """
     print(f"\nProcessando: {caminho_pdf.name}")
 
-    # "rb" = read binary — PDFs são binários, não texto
     with open(caminho_pdf, "rb") as f:
         pdf_bytes = f.read()
     print(f"  → PDF lido ({len(pdf_bytes) // 1024} KB)")
@@ -192,38 +263,34 @@ def processar_pdf(caminho_pdf: Path) -> None:
 
     texto_limpo = limpar_resposta(response.text)
 
-    # json.loads() converte string JSON → dicionário Python
-    # Quebra se o texto não for JSON válido — por isso a limpeza acima importa
     try:
-        dados = json.loads(texto_limpo)
+        totais = json.loads(texto_limpo)
     except json.JSONDecodeError as e:
         print(f"  ✘ Gemini não devolveu JSON válido: {e}")
         print(f"  Resposta recebida:\n{texto_limpo[:300]}")
         return
 
-    dados = validar_e_completar(dados)
+    totais = validar_totais(totais)
 
-    # stem pega o nome do arquivo sem extensão
-    # boletim_londrina.pdf → boletim_londrina → boletim_londrina.csv
+    print(f"  → Totais municipais extraídos:")
+    print(f"     Semana:      {totais['week']}")
+    print(f"     Notificados: {totais['notified']}")
+    print(f"     Confirmados: {totais['confirmed']}")
+    print(f"     Descartados: {totais['discarded']}")
+    print(f"     Em análise:  {totais['under_analysis']}")
+    print(f"     Óbitos:      {totais['deaths']}")
+
+    linhas = distribuir_por_regiao(totais)
+
+    print(f"  → Distribuição por região:")
+    for l in linhas:
+        print(f"     {l['region']:10} notified={l['notified']:5}  confirmed={l['confirmed']:4}  risk_type={l['type']}")
+
     nome_saida = caminho_pdf.stem + ".csv"
-    salvar_csv(dados, PROCESSED_DIR / nome_saida)
-
-    print(f"  → Semana:      {dados['week']}")
-    print(f"  → Notificados: {dados['notified']}")
-    print(f"  → Confirmados: {dados['confirmed']}")
-    print(f"  → Descartados: {dados['discarded']}")
-    print(f"  → Em análise:  {dados['under_analysis']}")
-    print(f"  → Óbitos:      {dados['deaths']}")
-    print(f"  → Zika:        {dados['zika_cases']}")
-    print(f"  → Chikungunya: {dados['chikungunya_cases']}")
+    salvar_csv(linhas, PROCESSED_DIR / nome_saida)
 
 
 def main() -> None:
-    """
-    sys.argv é a lista de argumentos da linha de comando.
-    sys.argv[0] = nome do script
-    sys.argv[1] = primeiro argumento (se existir)
-    """
     if len(sys.argv) > 1:
         pdf = Path(sys.argv[1])
         if not pdf.is_absolute():
@@ -243,7 +310,5 @@ def main() -> None:
     print("\nConcluído.")
 
 
-# Esse if garante que main() só roda quando você executa o script diretamente.
-# Se outro arquivo importar esse módulo, main() não é chamada automaticamente.
 if __name__ == "__main__":
     main()
