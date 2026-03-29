@@ -30,7 +30,7 @@ Implementação. Backend C++ com estrutura de classes completa. Parser processan
 | #5  | Classe `MonthlyBulletin` (C++) | Guilherme | ✅ Feito |
 | #4  | Herança: `UrbanRegion` / `RuralDistrict` | Guilherme | ✅ Feito |
 | #3  | `LinkedList` com `insertOrdered`, `find`, `remove` | Guilherme | ✅ Feito |
-| —   | 11 boletins reais processados (2025) | Pedro | ✅ Feito |
+| —   | 11 boletins reais processados (2025) | Gabriel | ✅ Feito |
 | —   | Download automático de PDFs (`baixar_boletins.py`) | Gabriel | ✅ Feito |
 | #9  | Wireframes do dashboard | Gabriel + Alan | ✅ Feito |
 | #19 | Dashboard Next.js | Gabriel + Alan | 🔄 Em andamento |
@@ -44,7 +44,7 @@ Implementação. Backend C++ com estrutura de classes completa. Parser processan
 - **16/03** — Sessão 0: stack, equipe, prazos, ADRs iniciais. Repo criado.
 - **17-22/03** — Sessão 1-3: `Locality.h/.cpp`, `Node.h/.cpp`, contrato CSV, frontend Next.js inicializado, benchmark de bibliotecas PDF, wireframes do dashboard (Gabriel).
 - **23-25/03** — Sessão 4: `Node` implementado. Documento AEP iniciado. `ia_scan.py` (parser Gemini completo), `output-schema.json`, `resultado.json` mock para o frontend.
-- **27/03** — Pedro: 11 boletins 2025 processados, CSVs em `data/processed/`. Gabriel: `baixar_boletins.py` (download automático de PDFs).
+- **27/03** — Gabriel: 11 boletins 2025 processados, CSVs em `data/processed/`. Gabriel: `baixar_boletins.py` (download automático de PDFs).
 - **28/03** — Sessão 5: `MonthlyBulletin`, `UrbanRegion`, `RuralDistrict`, `LinkedList` implementados. Reorganização de pastas. Refactor: `WeeklyBulletin` → `MonthlyBulletin`, campo `week` → `month`.
 
 ## DECISÕES DE ARQUITETURA (ADRs)
@@ -58,7 +58,10 @@ Implementação. Backend C++ com estrutura de classes completa. Parser processan
 | 005 | Gemini API (`gemini-2.5-flash`) como parser de PDF | 24/03/2026 |
 | 006 | `resultado.json` como contrato entre C++ e frontend | 24/03/2026 |
 | 007 | Boletins mensais — atualização uma vez por mês | 28/03/2026 |
+| 008 | `WeeklyBulletin` renomeado para `MonthlyBulletin`, campo `week` → `month` | 28/03/2026 |
+| 009 | `insertOrdered` ordena alfabeticamente por nome de região | 28/03/2026 |
 | 010 | Código-fonte em inglês | ~20/03/2026 |
+| 011 | Sublista de boletins: `head` = boletim mais recente (insert no início) | 28/03/2026 |
 
 ## BLOQUEIOS
 
