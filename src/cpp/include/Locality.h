@@ -14,6 +14,7 @@ class Locality{
         void setName(const std::string &name);
         virtual ~Locality();
         virtual bool isUrban() = 0;
+        void addBulletin(MonthlyBulletin *bulletin);
         
     protected:
         MonthlyBulletin *head;
