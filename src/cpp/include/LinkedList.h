@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "Node.h"
 #include "Locality.h"
 
