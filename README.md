@@ -37,9 +37,8 @@ sentinela-londrina/
 │   ├── raw/            # Boletins PDF originais
 │   └── processed/      # CSVs gerados pelo parser
 ├── docs/
-│   ├── contrato-csv.md
 │   ├── wireframes/     # Screenshots do dashboard
-│   └── documento-abnt/
+│   └── uml/            # Diagramas UML
 └── .gitignore
 ```
 
