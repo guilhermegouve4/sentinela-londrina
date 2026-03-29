@@ -21,8 +21,8 @@ A Secretaria Municipal de Saúde de Londrina publica periodicamente boletins epi
 
 | Camada | Tecnologia | Responsável |
 |--------|-----------|-------------|
-| Backend | C++ (POO, lista encadeada manual) | Guilherme, Pedro |
-| Parser | Python (extração de boletins → CSV) | Gabriel, Pedro |
+| Backend | C++ (POO, lista encadeada manual) | Guilherme |
+| Parser | Python (extração de boletins → CSV) | Pedro, Gabriel |
 | Frontend | Next.js (dashboard) | Gabriel, Alan |
 
 ## Estrutura do Repositório
@@ -35,13 +35,11 @@ sentinela-londrina/
 │   └── frontend/       # Next.js app
 ├── data/
 │   ├── raw/            # Boletins PDF originais
-│   ├── mock/           # CSVs de desenvolvimento
 │   └── processed/      # CSVs gerados pelo parser
 ├── docs/
-│   ├── ROADMAP_1BIM.md
 │   ├── contrato-csv.md
+│   ├── wireframes/     # Screenshots do dashboard
 │   └── documento-abnt/
-├── CLAUDE.md
 └── .gitignore
 ```
 
@@ -60,10 +58,9 @@ sentinela-londrina/
 
 | Nome | Papel |
 |------|-------|
-| Guilherme | Backend C++|
-| Gabriel | Parser Python |
+| Guilherme | Backend C++ |
 | Pedro | Parser Python |
-| Gabriel | Frontend Next.js |
+| Gabriel | Parser Python + Frontend Next.js |
 | Alan | Frontend Next.js |
 
 ## Fontes de Dados
