@@ -86,7 +86,7 @@ def construir_url(ano: int, numero: int) -> str:
 def nome_arquivo(ano: int, numero: int) -> str:
     """Gera o nome do arquivo local para um boletim."""
     nn = str(numero).zfill(2)
-    return f"boletim_{nn}_{ano}.pdf"
+    return f"{nn}-{ano}.pdf"
 
 
 # =============================================================================
