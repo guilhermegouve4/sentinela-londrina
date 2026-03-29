@@ -15,7 +15,7 @@ Implementação. Backend C++ com estrutura de classes completa. Parser processan
 
 ## PROGRESSO
 
-1º Bim (06/04): 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 60%
+1º Bim (06/04): 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 70%
 2º Bim (08/06): ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜  0%
 
 ## ENTREGÁVEIS DO 1º BIMESTRE
@@ -32,7 +32,7 @@ Implementação. Backend C++ com estrutura de classes completa. Parser processan
 | #3  | `LinkedList` com `insertOrdered`, `find`, `remove` | Guilherme | ✅ Feito |
 | —   | 11 boletins reais processados (2025) | Pedro | ✅ Feito |
 | —   | Download automático de PDFs (`baixar_boletins.py`) | Gabriel | ✅ Feito |
-| #9  | Wireframes do dashboard | Gabriel + Alan | 🔄 Em andamento |
+| #9  | Wireframes do dashboard | Gabriel + Alan | ✅ Feito |
 | #19 | Dashboard Next.js | Gabriel + Alan | 🔄 Em andamento |
 | #11 | Documento ABNT — entrega parcial | Grupo todo | 🔄 Em andamento |
 | #6  | `CSVReader` C++ | Guilherme | ⏳ Pendente |
