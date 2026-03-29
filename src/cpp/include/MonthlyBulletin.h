@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 
-class WeeklyBulletin {
+class MonthlyBulletin {
     private:
-        std::string m_week;
+        std::string m_month;
         int m_notified;
         int m_confirmed;
         int m_discarded;
@@ -16,9 +16,9 @@ class WeeklyBulletin {
         int m_deaths;
 
     public:
-        WeeklyBulletin *next;
-        WeeklyBulletin(
-            const std::string &week,
+        MonthlyBulletin *next;
+        MonthlyBulletin(
+            const std::string &month,
             int notified,
             int confirmed,
             int discarded,
@@ -30,7 +30,7 @@ class WeeklyBulletin {
             int chikungunyaCases,
             int deaths
         ) :
-            m_week(week),
+            m_month(month),
             m_notified(notified),
             m_confirmed(confirmed),
             m_discarded(discarded),
@@ -43,7 +43,7 @@ class WeeklyBulletin {
             m_deaths(deaths),
             next(nullptr) {}
 
-        std::string getWeek() const;
+        std::string getMonth() const;
         int getNotified() const;
         int getConfirmed() const;
         int getDiscarded() const;

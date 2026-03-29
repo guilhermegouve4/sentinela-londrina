@@ -1,5 +1,5 @@
 #include "../include/UrbanRegion.h"
-#include "../include/WeeklyBulletin.h"
+#include "../include/MonthlyBulletin.h"
 
 UrbanRegion::UrbanRegion(const std::string &name) : Locality(name) {}
 
