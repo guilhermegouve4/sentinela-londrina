@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class WeeklyBulletin;
+class MonthlyBulletin;
 
 class Locality{
     private:
@@ -16,6 +16,6 @@ class Locality{
         virtual bool isUrban() = 0;
         
     protected:
-        WeeklyBulletin *head;
+        MonthlyBulletin *head;
 
 };

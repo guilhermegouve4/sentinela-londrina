@@ -1,5 +1,5 @@
 #include "../include/RuralDistrict.h"
-#include "../include/WeeklyBulletin.h"
+#include "../include/MonthlyBulletin.h"
 
 RuralDistrict::RuralDistrict() : Locality("Rural") {}
 
