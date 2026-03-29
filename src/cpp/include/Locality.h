@@ -8,10 +8,10 @@ class Locality{
         std::string m_name;
 
     public:
-        Locality(std::string name) : m_name(name){}
+        Locality(const std::string &name) : m_name(name), head(nullptr) {}
         virtual double calculateRisk() = 0;
         std::string getName() const;
-        void setName(std::string name);
+        void setName(const std::string &name);
         virtual ~Locality();
         virtual bool isUrban() = 0;
         
