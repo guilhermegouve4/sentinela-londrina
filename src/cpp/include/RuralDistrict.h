@@ -5,5 +5,5 @@ class RuralDistrict : public Locality{
     public: 
         RuralDistrict();
         double calculateRisk() override;
-        bool isUrban () override;
+        bool isUrban() override;
 };
