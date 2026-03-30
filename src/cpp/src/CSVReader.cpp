@@ -12,6 +12,7 @@ static const std::string DATA_PATH = "data/processed/";
 
 void CSVReader::read(LinkedList &list) {
     std::vector<std::filesystem::path> files;
+
     for (auto &entry : std::filesystem::directory_iterator(DATA_PATH)) {
         if (entry.path().extension() == ".csv") {
             files.push_back(entry.path());
@@ -28,9 +29,12 @@ void CSVReader::read(LinkedList &list) {
         std::string month = stem.substr(5, 2) + "/" + stem.substr(0, 4);
 
         while (std::getline(file, line)) {
-            if (line.empty()) continue;
+            if (line.empty()){
+                continue;
+            }
             std::stringstream ss(line);
-            std::string region, type, week;
+            
+            std::string region, type, csvMonth;
             int notified, confirmed, discarded, underAnalysis;
             int dengueCases, dengueAlarmCases, dengueSevereCases;
             int zikaCases, chikungunyaCases, deaths;
@@ -38,7 +42,7 @@ void CSVReader::read(LinkedList &list) {
 
             std::getline(ss, region, ',');
             std::getline(ss, type, ',');
-            std::getline(ss, week, ',');
+            std::getline(ss, csvMonth, ',');
             ss >> notified >> comma >> confirmed >> comma >> discarded >> comma
                >> underAnalysis >> comma >> dengueCases >> comma
                >> dengueAlarmCases >> comma >> dengueSevereCases >> comma
