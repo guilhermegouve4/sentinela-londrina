@@ -1,4 +1,4 @@
-region,type,week,notified,confirmed,discarded,under_analysis,dengue_cases,dengue_alarm_cases,dengue_severe_cases,zika_cases,chikungunya_cases,deaths
+region,type,month,notified,confirmed,discarded,under_analysis,dengue_cases,dengue_alarm_cases,dengue_severe_cases,zika_cases,chikungunya_cases,deaths
 Norte,urban,01/2025,6622,1526,4959,138,1526,145,18,0,0,3
 Sul,urban,01/2025,3830,882,2868,80,882,84,11,0,0,2
 Leste,urban,01/2025,2345,540,1756,49,540,51,6,0,0,1
