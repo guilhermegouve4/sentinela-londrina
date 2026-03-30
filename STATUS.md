@@ -4,7 +4,7 @@
 
 ## FASE ATUAL
 
-Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVReader`. Parser processando 10 boletins reais. Faltam `JSONWriter`, integração end-to-end e UML.
+Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVReader` e `JSONWriter`. Parser processando 10 boletins reais. Faltam `main.cpp` e UML.
 
 ## PRAZOS
 
@@ -15,7 +15,7 @@ Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVRe
 
 ## PROGRESSO
 
-1º Bim (06/04): 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 80%
+1º Bim (06/04): 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 90%
 2º Bim (08/06): ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜  0%
 
 ## ENTREGÁVEIS DO 1º BIMESTRE
@@ -36,7 +36,7 @@ Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVRe
 | #19 | Dashboard Next.js | Gabriel + Alan | 🔄 Em andamento |
 | #11 | Documento ABNT — entrega parcial | Grupo todo | 🔄 Em andamento |
 | #6  | `CSVReader` C++ | Guilherme | ✅ Feito |
-| —   | `JSONWriter` C++ | Guilherme | ⏳ Pendente |
+| #28 | `JSONWriter` C++ | Guilherme | ✅ Feito |
 | #12 | Integração end-to-end: CSV → C++ → result.json | Guilherme | ⏳ Pendente |
 | #10 | Diagrama de Classes UML | Alan | 🔄 Em andamento |
 
@@ -47,7 +47,7 @@ Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVRe
 - **23-25/03** — Sessão 4: `Node` implementado. Documento AEP iniciado. `ai_scan.py` (parser Gemini completo), `result.json` mock para o frontend.
 - **27/03** — Gabriel: 11 boletins 2025 processados, CSVs em `data/processed/`. Gabriel: `download_bulletins.py` (download automático de PDFs).
 - **28/03** — Sessão 5: `MonthlyBulletin`, `UrbanRegion`, `RuralDistrict`, `LinkedList` implementados. Reorganização de pastas. Refactor: `WeeklyBulletin` → `MonthlyBulletin`, campo `week` → `month`.
-- **30/03** — Sessão 6: `CSVReader` implementado. `JSONWriter` decidido como classe separada (ADR 012). Headers dos CSVs corrigidos (`week` → `month`). Gabriel: estrutura de rotas do Next.js, fix do parser.
+- **30/03** — Sessão 6: `CSVReader` implementado. `JSONWriter` implementado como classe separada (ADR 012). `getHead()` adicionado em `LinkedList` e `Locality`. Headers dos CSVs corrigidos (`week` → `month`). Gabriel: estrutura de rotas do Next.js, fix do parser.
 
 ## DECISÕES DE ARQUITETURA (ADRs)
 
@@ -75,7 +75,6 @@ Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVRe
 
 | Dia | Quem | O quê |
 |-----|------|-------|
-| Seg 30 | Guilherme | `JSONWriter` C++ |
-| Seg 30 | Guilherme | `main.cpp` — orquestração end-to-end |
+| Ter 31 | Guilherme | `main.cpp` — orquestração end-to-end |
 | Ter 31 | Alan | UML de classes |
 | Ter 31 | Grupo | Reunião: status check — código, wireframes, documento |
