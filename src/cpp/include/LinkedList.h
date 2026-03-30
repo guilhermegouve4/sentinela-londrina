@@ -14,4 +14,5 @@ public:
     void insertOrdered(Locality *locality);
     Locality* find(const std::string &name);
     void remove(const std::string &name);
+    Node* getHead() const { return head; }
 };

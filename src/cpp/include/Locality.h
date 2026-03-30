@@ -15,6 +15,7 @@ class Locality{
         virtual ~Locality();
         virtual bool isUrban() = 0;
         void addBulletin(MonthlyBulletin *bulletin);
+        MonthlyBulletin* getHead() const { return head; }
         
     protected:
         MonthlyBulletin *head;
