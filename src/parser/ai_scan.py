@@ -62,7 +62,7 @@ client = genai.Client(api_key=CHAVE_API)
 # =============================================================================
 
 CAMPOS_CONTRATO = [
-    "region", "type", "week",
+    "region", "type", "month",
     "notified", "confirmed", "discarded", "under_analysis",
     "dengue_cases", "dengue_alarm_cases", "dengue_severe_cases",
     "zika_cases", "chikungunya_cases", "deaths",
@@ -118,7 +118,7 @@ sem blocos de código markdown (sem ```), sem explicações.
 O JSON deve ter exatamente esses campos:
 
 {
-  "week": "01/2025",
+  "month": "01/2025",
   "notified": 0,
   "confirmed": 0,
   "discarded": 0,
@@ -132,7 +132,7 @@ O JSON deve ter exatamente esses campos:
 }
 
 Instruções para preencher cada campo:
-- week: semana epidemiológica inicial do período — formato "01/2025"
+- month: mês de referência do boletim — formato "01/2025"
 - notified: total de notificações de casos suspeitos de dengue em Londrina
 - confirmed: casos encerrados como confirmados em Londrina
 - discarded: casos descartados em Londrina
@@ -165,7 +165,7 @@ def validar_totais(dados: dict) -> dict:
     Campos faltantes recebem 0.
     """
     padroes = {
-        "week": "01/2025",
+        "month": "01/2025",
         "notified": 0, "confirmed": 0, "discarded": 0, "under_analysis": 0,
         "dengue_cases": 0, "dengue_alarm_cases": 0, "dengue_severe_cases": 0,
         "zika_cases": 0, "chikungunya_cases": 0, "deaths": 0,
@@ -204,7 +204,7 @@ def distribuir_por_regiao(totais: dict) -> list[dict]:
         linha = {
             "region": nome,
             "type": tipo,
-            "week": totais["week"],
+            "month": totais["month"],
         }
 
         for campo in campos_numericos:
@@ -273,7 +273,7 @@ def processar_pdf(caminho_pdf: Path) -> None:
     totais = validar_totais(totais)
 
     print(f"  → Totais municipais extraídos:")
-    print(f"     Semana:      {totais['week']}")
+    print(f"     Mês:      {totais['month']}")
     print(f"     Notificados: {totais['notified']}")
     print(f"     Confirmados: {totais['confirmed']}")
     print(f"     Descartados: {totais['discarded']}")
