@@ -148,9 +148,9 @@ Atualmente o frontend utiliza dados mock do arquivo `public/result.json`. Quando
 
 ## 👥 Equipe de Desenvolvimento
 
-- **Gabriel Castro (gcastrodev)**: Desenvolvimento frontend e parser Python
-- **Alan**: Desenvolvimento frontend
-- **Guilherme Gouvea**: Coordenação e backend C++
+- **Gabriel Castro (gcastrodev)**: Desenvolvimento frontend, parser Python e integração de sistemas
+- **Guilherme Gouvea**: Desenvolvimento backend C++ e arquitetura do sistema
+- **Alan**: Desenvolvimento frontend e interface do usuário
 
 ## 📚 Links Úteis
 
