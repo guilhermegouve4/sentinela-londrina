@@ -1,5 +1,17 @@
 "use client";
 
+/**
+ * Boletins Semanais - Acesso aos Documentos Oficiais.
+ * 
+ * Esta página permite:
+ * - Visualizar lista de boletins epidemiológicos publicados
+ * - Baixar os arquivos PDF originais da prefeitura
+ * - Buscar por número ou data específica
+ * - Filtrar por ano epidemiológico
+ * 
+ * Os dados são extraídos automaticamente do portal da Prefeitura de Londrina.
+ */
+
 import resultData from "../../public/result.json";
 import { FileText, Download, ExternalLink, Search, Filter } from "lucide-react";
 
