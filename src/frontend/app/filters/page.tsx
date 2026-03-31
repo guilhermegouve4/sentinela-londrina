@@ -17,10 +17,10 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { loadResultData } from "../../lib/data";
-import { ResultData, Region } from "../../types/result";
+import { ResultData } from "../../types/result";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { ErrorMessage } from "../../components/ErrorMessage";
-import { Filter, Search, Calendar, MapPin, ChevronDown, RefreshCw, BarChart3, TrendingUp } from "lucide-react";
+import { Filter, Search, MapPin, ChevronDown, RefreshCw, BarChart3, TrendingUp } from "lucide-react";
 import { SummaryCard } from "../../components/SummaryCard";
 import { Users, CheckCircle, AlertTriangle } from "lucide-react";
 
