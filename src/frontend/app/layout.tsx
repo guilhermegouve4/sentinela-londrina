@@ -10,14 +10,14 @@
  * 
  * A sidebar contém links para todas as funcionalidades principais:
  * - Visão Geral: Dashboard com métricas gerais
- * - Evolução Temporal: Gráficos de tendência semanal
- * - Boletins: Acesso aos documentos PDF originais
- * - Filtros: Busca avançada por parâmetros específicos
- * - Ingestão: Upload e processamento de novos boletins
- * - Relatório: Documento situacional completo
- * - Histórico: Análise de permanência em status por região
- * - Hierarquia: Estrutura organizacional das UBS
- * - Alertas: Central de notificações críticas
+ * - Evolution: Gráficos de tendência semanal
+ * - Bulletins: Acesso aos documentos PDF originais
+ * - Filters: Busca avançada por parâmetros específicos
+ * - Ingestion: Upload e processamento de novos boletins
+ * - Report: Documento situacional completo
+ * - History: Análise de permanência em status por região
+ * - Hierarchy: Estrutura organizacional das UBS
+ * - Alerts: Central de notificações críticas
  */
 
 import { usePathname } from "next/navigation";
@@ -39,14 +39,14 @@ import {
 // Array de itens de navegação com href, label e ícone correspondente
 const navItems = [
   { href: "/",           label: "Visão Geral",          icon: LayoutDashboard },
-  { href: "/evolucao",   label: "Evolução Temporal",     icon: TrendingUp },
-  { href: "/boletins",   label: "Boletins Semanais",     icon: FileText },
-  { href: "/filtros",    label: "Filtros Avançados",     icon: Filter },
-  { href: "/ingestao",   label: "Ingestão de Dados",     icon: Upload },
-  { href: "/relatorio",  label: "Relatório Situacional", icon: ClipboardList },
-  { href: "/historico",  label: "Histórico por Região",  icon: Clock },
-  { href: "/hierarquia", label: "Hierarquia UBS",        icon: Network },
-  { href: "/alertas",    label: "Central de Alertas",    icon: AlertTriangle },
+  { href: "/evolution",  label: "Evolução Temporal",     icon: TrendingUp },
+  { href: "/bulletins",  label: "Boletins Semanais",     icon: FileText },
+  { href: "/filters",    label: "Filtros Avançados",     icon: Filter },
+  { href: "/ingestion",  label: "Ingestão de Dados",     icon: Upload },
+  { href: "/report",     label: "Relatório Situacional", icon: ClipboardList },
+  { href: "/history",    label: "Histórico por Região",  icon: Clock },
+  { href: "/hierarchy",  label: "Hierarquia UBS",        icon: Network },
+  { href: "/alerts",     label: "Central de Alertas",    icon: AlertTriangle },
 ];
 
 // Componente da barra lateral com navegação
