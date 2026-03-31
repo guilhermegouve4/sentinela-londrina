@@ -1,85 +1,173 @@
 # Sentinela Londrina - Frontend
 
-## Visão Geral
+## 📊 Visão Geral
 
-Este é o módulo frontend do projeto **Sentinela Londrina**, um sistema de monitoramento de arboviroses (Dengue, Zika, Chikungunya) que utiliza dados abertos da prefeitura de Londrina. O objetivo principal do frontend é fornecer um dashboard visual e interativo para apresentar os dados minerados e analisados pelo backend, permitindo filtros por localidade e visualização de relatórios situacionais.
+Este é o módulo frontend do projeto **Sentinela Londrina**, um sistema completo de monitoramento de arboviroses (Dengue, Zika, Chikungunya) que utiliza dados abertos da prefeitura de Londrina. O frontend fornece um dashboard moderno e interativo para visualização de dados epidemiológicos, com filtros avançados, gráficos em tempo real e geração de relatórios PDF.
 
-## Tecnologias Utilizadas
+## ✨ Funcionalidades Implementadas
 
-O frontend do Sentinela Londrina é construído com as seguintes tecnologias:
+### 🎯 **Dashboard Completo**
+- **Página Inicial**: Visão geral com métricas principais e cards de resumo
+- **Filtros Avançados**: Busca em tempo real por região, nível de risco e período
+- **Evolução Temporal**: Gráficos interativos mostrando tendência mensal de casos
+- **Relatórios**: Documentos oficiais com exportação PDF profissional
+- **Hierarquia**: Visualização da estrutura administrativa municipal
 
-*   **Next.js**: Framework React para construção de aplicações web modernas, com foco em performance e experiência do desenvolvedor.
-*   **TypeScript**: Superset do JavaScript que adiciona tipagem estática, melhorando a robustez e manutenibilidade do código.
-*   **Tailwind CSS**: Framework CSS utilitário para estilização rápida e responsiva.
+### 📈 **Visualizações de Dados**
+- **Gráficos Chart.js**: Linha para evolução temporal, barras para distribuição regional
+- **Cards de Resumo**: Métricas principais com indicadores visuais
+- **Tabelas Interativas**: Dados tabulares com filtros e ordenação
+- **Indicadores de Status**: Cores dinâmicas (verde/normal, amarelo/alerta, vermelho/crítico)
 
-## Estrutura do Projeto
+### 🛠️ **Recursos Técnicos**
+- **Type Safety**: TypeScript completo, sem uso de `any`
+- **Componentes Reutilizáveis**: LoadingSpinner, ErrorMessage, SummaryCard
+- **Data Layer**: Cache inteligente com validação de dados
+- **Responsividade**: Interface adaptável para desktop e mobile
+- **Performance**: Otimização com useMemo e lazy loading
 
-A estrutura de pastas do frontend (`src/frontend`) segue a convenção de projetos Next.js:
+## 🚀 Tecnologias Utilizadas
+
+- **Next.js 16.1.7**: Framework React com App Router e Turbopack
+- **TypeScript**: Tipagem estática completa
+- **Tailwind CSS**: Estilização utilitária e responsiva
+- **Chart.js + react-chartjs-2**: Gráficos interativos
+- **jsPDF + html2canvas**: Geração de PDFs
+- **Lucide React**: Ícones consistentes
+- **ESLint**: Linting e formatação de código
+
+## 📁 Estrutura do Projeto
 
 ```
-sentinela-londrina/
-└── src/
-    └── frontend/       # Next.js app
-        ├── app/            # Rotas e páginas da aplicação
-        ├── components/     # Componentes React reutilizáveis
-        ├── lib/            # Funções utilitárias e lógica de negócio do frontend
-        ├── public/         # Ativos estáticos (imagens, fontes)
-        └── types/          # Definições de tipos TypeScript
-        ├── .gitignore
-        ├── eslint.config.mjs
-        ├── next.config.ts
-        ├── package-lock.json
-        ├── package.json
-        ├── postcss.config.mjs
-        └── tsconfig.json
+src/frontend/
+├── app/                    # Páginas Next.js (App Router)
+│   ├── page.tsx           # Dashboard principal
+│   ├── filters/           # Filtros avançados
+│   ├── evolution/         # Gráficos de evolução
+│   ├── report/            # Relatórios PDF
+│   └── ...
+├── components/            # Componentes React reutilizáveis
+│   ├── LoadingSpinner.tsx
+│   ├── ErrorMessage.tsx
+│   └── SummaryCard.tsx
+├── lib/                   # Utilitários e lógica de negócio
+│   └── data.ts           # Data layer com cache
+├── types/                 # Definições TypeScript
+│   └── result.ts         # Interfaces dos dados
+└── public/               # Assets estáticos
+    └── result.json       # Dados mock (substituído pelo backend)
 ```
 
-## Como Rodar o Projeto (Frontend)
+## 🏃‍♂️ Como Rodar o Projeto
 
-Para configurar e executar o ambiente de desenvolvimento do frontend, siga os passos abaixo:
+### 📋 Pré-requisitos
+- **Node.js**: Versão 18.0 ou superior
+- **npm/yarn/pnpm**: Gerenciador de pacotes
 
-1.  **Navegue até a pasta do frontend:**
-    ```bash
-    cd src/frontend
-    ```
+### 🚀 Instalação e Execução
 
-2.  **Instale as dependências:**
-    ```bash
-    npm install
-    # ou
-    yarn install
-    # ou
-    pnpm install
-    ```
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/guilhermegouve4/sentinela-londrina.git
+   cd sentinela-londrina
+   ```
 
-3.  **Inicie o servidor de desenvolvimento:**
-    ```bash
-    npm run dev
-    # ou
-    yarn dev
-    # ou
-    pnpm dev
-    ```
+2. **Navegue para o diretório do frontend:**
+   ```bash
+   cd src/frontend
+   ```
 
-4.  Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
+3. **Instale as dependências:**
+   ```bash
+   npm install
+   # ou
+   yarn install
+   # ou
+   pnpm install
+   ```
 
-## Status do Desenvolvimento (Frontend)
+4. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   # ou
+   yarn dev
+   # ou
+   pnpm dev
+   ```
 
-O desenvolvimento do frontend está **em andamento**, com foco na implementação do dashboard visual. As principais tarefas e o status atual são:
+5. **Acesse a aplicação:**
+   - Abra [http://localhost:3000](http://localhost:3000) no navegador
+   - O servidor terá hot-reload automático
 
-*   **Wireframes do dashboard:** ✅ Feito
-*   **Implementação do dashboard Next.js:** 🔄 Em andamento (Issue #19)
-*   **Integração frontend ↔ backend:** ⏳ Pendente (Issue #16)
+### 🏗️ Build para Produção
 
-## Equipe de Desenvolvimento (Frontend)
+```bash
+# Build otimizado para produção
+npm run build
 
-Os seguintes membros da equipe são responsáveis pelo desenvolvimento do frontend:
+# Iniciar servidor de produção
+npm start
+```
 
-*   **Gabriel Castro (gcastrodev)**: Responsável pelo Parser Python e Frontend Next.js.
-*   **Alan**: Responsável pelo Frontend Next.js.
+### 🧪 Desenvolvimento
 
-## Links Úteis
+```bash
+# Verificar linting
+npm run lint
 
-*   [Documentação do Next.js](https://nextjs.org/docs)
-*   [Learn Next.js](https://nextjs.org/learn)
-*   [Repositório GitHub do Projeto](https://github.com/guilhermegouve4/sentinela-londrina)
+# Build de desenvolvimento
+npm run build
+```
+
+## 🔧 Configuração de Desenvolvimento
+
+### 📊 Dados Mock
+Atualmente o frontend utiliza dados mock do arquivo `public/result.json`. Quando o backend C++ estiver pronto, este arquivo será substituído automaticamente pelos dados reais gerados pelo parser.
+
+### 🎨 Personalização
+- **Cores**: Tema vermelho para alertas epidemiológicos
+- **Tipografia**: Sistema nativo para melhor performance
+- **Ícones**: Lucide React para consistência visual
+
+## 📈 Status do Desenvolvimento
+
+### ✅ **Implementado**
+- [x] Dashboard responsivo com Next.js 16
+- [x] Filtros funcionais em tempo real
+- [x] Gráficos Chart.js (linha e barras)
+- [x] Exportação PDF profissional
+- [x] Type safety completo
+- [x] Componentes reutilizáveis
+- [x] Data layer com cache
+- [x] Interface responsiva
+
+### 🔄 **Integração Pendente**
+- [ ] Conexão com backend C++ (Issue #16)
+- [ ] Deploy em produção
+- [ ] Testes automatizados
+
+## 👥 Equipe de Desenvolvimento
+
+- **Gabriel Castro (gcastrodev)**: Desenvolvimento frontend e parser Python
+- **Alan**: Desenvolvimento frontend
+- **Guilherme Gouvea**: Coordenação e backend C++
+
+## 📚 Links Úteis
+
+- [Documentação Next.js](https://nextjs.org/docs)
+- [Chart.js Documentation](https://www.chartjs.org/docs/latest/)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Repositório GitHub](https://github.com/guilhermegouve4/sentinela-londrina)
+- [Documentação do Projeto](../../docs/)
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'feat: adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](../../LICENSE) para mais detalhes.
