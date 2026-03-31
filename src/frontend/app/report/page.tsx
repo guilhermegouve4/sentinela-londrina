@@ -15,17 +15,21 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { loadResultData } from "../../lib/data";
 import { ResultData } from "../../types/result";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { ErrorMessage } from "../../components/ErrorMessage";
-import { ClipboardList, FileText, Printer, Share2, CheckCircle, AlertTriangle, MapPin } from "lucide-react";
+import { ClipboardList, FileText, Printer, Share2, CheckCircle, AlertTriangle, MapPin, Download } from "lucide-react";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default function RelatorioSituacional() {
   const [data, setData] = useState<ResultData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [exportingPDF, setExportingPDF] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadResultData().then(result => {
@@ -38,6 +42,60 @@ export default function RelatorioSituacional() {
     });
   }, []);
 
+  const generatePDF = async () => {
+    if (!reportRef.current || !data) return;
+
+    setExportingPDF(true);
+    try {
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: reportRef.current.scrollWidth,
+        height: reportRef.current.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Add additional pages if needed
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Add metadata
+      pdf.setProperties({
+        title: `Relatório Epidemiológico - ${data.meta.municipality}`,
+        subject: 'Boletim Epidemiológico',
+        author: 'Sistema Sentinela Londrina',
+        keywords: 'epidemiologia, dengue, vigilância sanitária',
+        creator: 'Sistema Sentinela Londrina'
+      });
+
+      pdf.save(`relatorio-epidemiologico-${data.meta.municipality.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      alert('Erro ao gerar PDF. Tente novamente.');
+    } finally {
+      setExportingPDF(false);
+    }
+  };
+
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
   if (!data) return <ErrorMessage message="Dados não disponíveis" />;
@@ -45,7 +103,7 @@ export default function RelatorioSituacional() {
   const { summary, regions, meta } = data;
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div ref={reportRef} className="p-8 max-w-5xl mx-auto">
       {/* Header do Relatório */}
       <div className="mb-10 flex items-center justify-between border-b border-gray-200 pb-8">
         <div className="flex items-center gap-4">
@@ -63,8 +121,13 @@ export default function RelatorioSituacional() {
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
             <Printer size={16} /> Imprimir
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-all shadow-md shadow-red-100">
-            <Share2 size={16} /> Exportar PDF
+          <button
+            onClick={generatePDF}
+            disabled={exportingPDF}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-all shadow-md shadow-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {exportingPDF ? <Download size={16} className="animate-spin" /> : <Share2 size={16} />}
+            {exportingPDF ? 'Gerando PDF...' : 'Exportar PDF'}
           </button>
         </div>
       </div>
@@ -81,7 +144,7 @@ export default function RelatorioSituacional() {
             <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
               <p className="text-xs font-bold text-gray-400 uppercase mb-2">Notificações Totais</p>
               <p className="text-3xl font-bold text-gray-900">{summary.total_notified.toLocaleString('pt-BR')}</p>
-              <p className="text-xs text-gray-500 mt-2">Acumulado no período de {meta.period.week_start} a {meta.period.week_end}</p>
+              <p className="text-xs text-gray-500 mt-2">Acumulado no período de {meta.period.month}</p>
             </div>
             <div className="p-6 bg-red-50 rounded-2xl border border-red-100">
               <p className="text-xs font-bold text-red-400 uppercase mb-2">Casos Confirmados</p>

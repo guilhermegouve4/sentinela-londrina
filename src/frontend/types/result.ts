@@ -5,8 +5,8 @@ export interface Meta {
   generated_at: string;
   source_file: string;
   period: {
-    week_start: string;
-    week_end: string;
+    month: string;
+    year: number;
   };
   municipality: string;
   population: number;
@@ -45,6 +45,7 @@ export interface Region {
 
 export interface MonthlySeriesItem {
   month: string;
+  year: number;
   date_range: string;
   total_confirmed: number;
   total_notified: number;
