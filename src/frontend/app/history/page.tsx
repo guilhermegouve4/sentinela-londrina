@@ -13,12 +13,36 @@
  * Ajuda na avaliação da efetividade das intervenções por região.
  */
 
-import resultData from "../../public/result.json";
+"use client";
+
+import { useEffect, useState } from "react";
+import { loadResultData } from "../../lib/data";
+import { ResultData } from "../../types/result";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { ErrorMessage } from "../../components/ErrorMessage";
 import { Clock, MapPin, Calendar, History, ArrowRight } from "lucide-react";
 
 export default function HistoricoRegiao() {
-  // Extração dos dados de histórico de status das regiões do arquivo JSON
-  const { status_history } = resultData;
+  const [data, setData] = useState<ResultData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadResultData().then(result => {
+      if (result.state === 'success') {
+        setData(result.data);
+      } else {
+        setError(result.error || 'Erro desconhecido');
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
+  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+
+  const { status_history } = data;
 
   return (
     <div className="p-8">

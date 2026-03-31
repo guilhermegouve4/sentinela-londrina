@@ -13,13 +13,36 @@
  * Integra o frontend com o backend Python para extração de dados.
  */
 
+"use client";
+
+import { useEffect, useState } from "react";
+import { loadResultData } from "../../lib/data";
+import { ResultData } from "../../types/result";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { ErrorMessage } from "../../components/ErrorMessage";
 import { Upload, FileText, CheckCircle, AlertCircle, RefreshCw, Database } from "lucide-react";
-import { useState } from "react";
 
 export default function IngestaoDados() {
-  // Estados para controlar o upload e status do processamento
+  const [data, setData] = useState<ResultData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
+
+  useEffect(() => {
+    loadResultData().then(result => {
+      if (result.state === 'success') {
+        setData(result.data);
+      } else {
+        setError(result.error || 'Erro desconhecido');
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
+  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
 
   // Função para simular o processo de upload
   const handleUpload = () => {

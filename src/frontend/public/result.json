@@ -132,10 +132,10 @@
     }
   ],
 
-  "weekly_series": [
+  "monthly_series": [
     {
-      "week": "01/2026",
-      "date_range": "29/12/2025-04/01/2026",
+      "month": "01/2026",
+      "date_range": "01/01/2026-31/01/2026",
       "total_confirmed": 52,
       "total_notified": 68,
       "total_deaths": 0,
@@ -149,8 +149,8 @@
       ]
     },
     {
-      "week": "02/2026",
-      "date_range": "05/01/2026-11/01/2026",
+      "month": "02/2026",
+      "date_range": "01/02/2026-28/02/2026",
       "total_confirmed": 68,
       "total_notified": 89,
       "total_deaths": 0,
@@ -164,8 +164,8 @@
       ]
     },
     {
-      "week": "12/2026",
-      "date_range": "18/03/2026-24/03/2026",
+      "month": "03/2026",
+      "date_range": "01/03/2026-31/03/2026",
       "total_confirmed": 295,
       "total_notified": 389,
       "total_deaths": 2,
