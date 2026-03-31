@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * Evolução Temporal - Análise de Tendências Semanais.
+ * Evolução Temporal - Análise de Tendências Mensais.
  * 
  * Esta página apresenta:
- * - Série histórica semanal de casos confirmados
- * - Comparação com semanas anteriores (diferenças positivas/negativas)
- * - Distribuição visual por região em cada semana
+ * - Série histórica mensal de casos confirmados
+ * - Comparação com meses anteriores (diferenças positivas/negativas)
+ * - Distribuição visual por região em cada mês
  * - Insights sobre picos, tendências e recuperações
  * - Barras de progresso mostrando distribuição regional
  * 
@@ -17,13 +17,13 @@ import resultData from "../../public/result.json";
 import { TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 export default function EvolucaoTemporal() {
-  const { weekly_series } = resultData;
+  const { monthly_series } = resultData;
 
   return (
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-gray-900">Evolução Temporal</h1>
-        <p className="text-sm text-gray-500 mt-1">Análise do crescimento de casos por semana epidemiológica</p>
+        <p className="text-sm text-gray-500 mt-1">Análise do crescimento de casos por mês epidemiológico</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
@@ -32,31 +32,31 @@ export default function EvolucaoTemporal() {
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <TrendingUp size={16} className="text-blue-600" />
-              Série Semanal de Casos
+              Série Mensal de Casos
             </h2>
           </div>
           <div className="p-6">
             <div className="space-y-8">
-              {weekly_series.map((week, idx) => {
-                const prevWeek = idx > 0 ? weekly_series[idx - 1] : null;
-                const diff = prevWeek ? week.total_confirmed - prevWeek.total_confirmed : 0;
+              {monthly_series.map((month, idx) => {
+                const prevMonth = idx > 0 ? monthly_series[idx - 1] : null;
+                const diff = prevMonth ? month.total_confirmed - prevMonth.total_confirmed : 0;
                 const isUp = diff > 0;
 
                 return (
-                  <div key={week.week} className="relative">
+                  <div key={month.month} className="relative">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100">
                           <Calendar size={18} className="text-gray-500" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Semana {week.week}</p>
-                          <p className="text-xs text-gray-500">{week.date_range}</p>
+                          <p className="text-sm font-medium text-gray-900">Mês {month.month}</p>
+                          <p className="text-xs text-gray-500">{month.date_range}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-semibold text-gray-900">{week.total_confirmed} casos</p>
-                        {prevWeek && (
+                        <p className="text-lg font-semibold text-gray-900">{month.total_confirmed} casos</p>
+                        {prevMonth && (
                           <p className={`text-xs font-medium flex items-center justify-end gap-1 ${isUp ? 'text-red-600' : 'text-green-600'}`}>
                             {isUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                             {Math.abs(diff)} em relação à anterior
@@ -67,7 +67,7 @@ export default function EvolucaoTemporal() {
                     
                     {/* Barra de Progresso Visual */}
                     <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden flex">
-                      {week.by_region.map((reg, rIdx) => (
+                      {month.by_region.map((reg, rIdx) => (
                         <div 
                           key={reg.region}
                           className={`h-full transition-all duration-500 ${
@@ -75,7 +75,7 @@ export default function EvolucaoTemporal() {
                             reg.status === 'alert' ? 'bg-yellow-500' : 'bg-green-500'
                           }`}
                           style={{ 
-                            width: `${(reg.confirmed / week.total_confirmed) * 100}%`,
+                            width: `${(reg.confirmed / month.total_confirmed) * 100}%`,
                             opacity: 1 - (rIdx * 0.1)
                           }}
                           title={`${reg.region}: ${reg.confirmed} casos`}
@@ -84,7 +84,7 @@ export default function EvolucaoTemporal() {
                     </div>
                     <div className="flex justify-between mt-1">
                       <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distribuição por Região</span>
-                      <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{week.total_notified} Notificações</span>
+                      <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{month.total_notified} Notificações</span>
                     </div>
                   </div>
                 );
