@@ -1,12 +1,27 @@
 "use client";
 
+/**
+ * Ingestão de Dados - Upload e Processamento de Boletins.
+ * 
+ * Esta página permite:
+ * - Upload de arquivos PDF de boletins epidemiológicos
+ * - Processamento automático via parser Python
+ * - Visualização do pipeline de dados (extração → normalização → cálculo)
+ * - Status em tempo real do processamento
+ * - Requisitos e limitações do sistema
+ * 
+ * Integra o frontend com o backend Python para extração de dados.
+ */
+
 import { Upload, FileText, CheckCircle, AlertCircle, RefreshCw, Database } from "lucide-react";
 import { useState } from "react";
 
 export default function IngestaoDados() {
+  // Estados para controlar o upload e status do processamento
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
 
+  // Função para simular o processo de upload
   const handleUpload = () => {
     setIsUploading(true);
     setTimeout(() => {

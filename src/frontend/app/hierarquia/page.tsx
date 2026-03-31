@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * Hierarquia de Saúde - Estrutura Organizacional das UBS.
+ * 
+ * Esta página exibe:
+ * - Árvore hierárquica da rede de saúde municipal
+ * - Estrutura: Sede → Regiões → Unidades Básicas de Saúde (UBS)
+ * - Contagem de casos confirmados por unidade
+ * - Status visual de cada nível da hierarquia
+ * - Estatísticas de cobertura e sincronização
+ * 
+ * Dados sincronizados com o Cadastro Nacional de Estabelecimentos de Saúde (CNES).
+ */
+
 import resultData from "../../public/result.json";
 import { Network, Hospital, MapPin, ChevronRight, ChevronDown } from "lucide-react";
 import { useState } from "react";

@@ -1,11 +1,25 @@
 "use client";
 
+/**
+ * Central de Alertas - Notificações Críticas do Sistema.
+ * 
+ * Esta página exibe todas as notificações automáticas disparadas pelo sistema:
+ * - Alertas críticos e de atenção baseados em thresholds configurados
+ * - Informações detalhadas sobre cada alerta (região, data, mensagem)
+ * - Protocolos de ação recomendados para cada nível de alerta
+ * - Interface para marcar alertas como lidos
+ * 
+ * Os alertas são gerados automaticamente quando regiões atingem níveis críticos.
+ */
+
 import resultData from "../../public/result.json";
 import { AlertTriangle, Bell, Clock, MapPin, ShieldAlert } from "lucide-react";
 
 export default function CentralAlertas() {
+  // Extração da lista de alertas do arquivo JSON
   const { alerts } = resultData;
 
+  // Função para determinar o estilo visual baseado no nível do alerta
   const getLevelStyle = (level: string) => {
     switch (level) {
       case "critical":
@@ -17,6 +31,7 @@ export default function CentralAlertas() {
     }
   };
 
+  // Função para determinar a cor do ícone baseado no nível do alerta
   const getIconColor = (level: string) => {
     switch (level) {
       case "critical":
@@ -30,6 +45,7 @@ export default function CentralAlertas() {
 
   return (
     <div className="p-8">
+      {/* Header com título, descrição e contador de alertas ativos */}
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Central de Alertas</h1>
@@ -41,6 +57,7 @@ export default function CentralAlertas() {
         </div>
       </div>
 
+      {/* Lista de alertas com cards individuais */}
       <div className="grid grid-cols-1 gap-4">
         {alerts.map((alert, idx) => (
           <div 
@@ -48,10 +65,12 @@ export default function CentralAlertas() {
             className={`p-6 rounded-xl border transition-all hover:shadow-md ${getLevelStyle(alert.level)}`}
           >
             <div className="flex items-start gap-4">
+              {/* Ícone do alerta baseado no nível */}
               <div className={`p-3 rounded-full bg-white/50 border border-white/20 ${getIconColor(alert.level)}`}>
                 {alert.level === 'critical' ? <ShieldAlert size={24} /> : <AlertTriangle size={24} />}
               </div>
               <div className="flex-1">
+                {/* Cabeçalho do alerta com nível, região e timestamp */}
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/40">
@@ -67,7 +86,9 @@ export default function CentralAlertas() {
                     {new Date(alert.triggered_at).toLocaleString('pt-BR')}
                   </span>
                 </div>
+                {/* Mensagem principal do alerta */}
                 <p className="text-lg font-medium leading-tight mb-3">{alert.message}</p>
+                {/* Botões de ação */}
                 <div className="flex gap-3">
                   <button className="text-xs font-bold uppercase tracking-widest px-4 py-2 bg-white/40 hover:bg-white/60 rounded-lg transition-colors">
                     Ver Detalhes
@@ -83,9 +104,11 @@ export default function CentralAlertas() {
       </div>
 
       {/* Histórico de Alertas Recentes */}
+      {/* Seção de protocolos de ação recomendados */}
       <div className="mt-12">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Protocolos de Ação</h2>
         <div className="grid grid-cols-2 gap-6">
+          {/* Protocolo para nível crítico */}
           <div className="bg-white p-5 rounded-xl border border-gray-200">
             <h3 className="text-sm font-bold text-red-700 uppercase mb-3">Nível Crítico</h3>
             <ul className="space-y-2 text-sm text-gray-600">
@@ -94,6 +117,7 @@ export default function CentralAlertas() {
               <li className="flex items-center gap-2">• Notificação prioritária à Secretaria de Saúde</li>
             </ul>
           </div>
+          {/* Protocolo para nível de alerta */}
           <div className="bg-white p-5 rounded-xl border border-gray-200">
             <h3 className="text-sm font-bold text-yellow-700 uppercase mb-3">Nível de Alerta</h3>
             <ul className="space-y-2 text-sm text-gray-600">

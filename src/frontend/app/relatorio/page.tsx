@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * Relatório Situacional - Documento Oficial Consolidado.
+ * 
+ * Esta página gera um relatório completo contendo:
+ * - Resumo executivo com métricas principais
+ * - Análise detalhada por região administrativa
+ * - Recomendações técnicas baseadas nos dados
+ * - Opções de exportação (impressão, PDF)
+ * - Formatação profissional para distribuição
+ * 
+ * Documento oficial para tomada de decisões e comunicação institucional.
+ */
+
 import resultData from "../../public/result.json";
 import { ClipboardList, FileText, Printer, Share2, CheckCircle, AlertTriangle, MapPin } from "lucide-react";
 
