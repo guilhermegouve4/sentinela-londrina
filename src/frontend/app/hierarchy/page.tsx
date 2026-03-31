@@ -13,9 +13,14 @@
  * Dados sincronizados com o Cadastro Nacional de Estabelecimentos de Saúde (CNES).
  */
 
-import resultData from "../../public/result.json";
+"use client";
+
+import { useEffect, useState } from "react";
+import { loadResultData } from "../../lib/data";
+import { ResultData } from "../../types/result";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { ErrorMessage } from "../../components/ErrorMessage";
 import { Network, Hospital, MapPin, ChevronRight, ChevronDown } from "lucide-react";
-import { useState } from "react";
 
 interface HierarchyNode {
   name: string;
@@ -78,7 +83,26 @@ const TreeNode = ({ node, depth = 0 }: { node: HierarchyNode, depth?: number }) 
 };
 
 export default function HierarquiaUBS() {
-  const { ubs_hierarchy } = resultData;
+  const [data, setData] = useState<ResultData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadResultData().then(result => {
+      if (result.state === 'success') {
+        setData(result.data);
+      } else {
+        setError(result.error || 'Erro desconhecido');
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
+  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+
+  const { ubs_hierarchy } = data;
 
   return (
     <div className="p-8">

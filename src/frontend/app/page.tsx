@@ -1,4 +1,12 @@
-import resultData from "../public/result.json";
+"use client";
+
+import { useEffect, useState } from "react";
+import { loadResultData, formatNumber } from "../lib/data";
+import { ResultData } from "../types/result";
+import { SummaryCard } from "../components/SummaryCard";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { Users, CheckCircle, AlertTriangle, MapPin } from "lucide-react";
 
 /**
  * Página inicial - Visão Geral das Regiões.
@@ -42,41 +50,57 @@ interface Region {
   progress_pct: number;
 }
 
-import { Users, CheckCircle, AlertTriangle, MapPin } from "lucide-react";
-
 export default function VisaoGeral() {
-  // Extração dos dados de resumo e regiões do arquivo JSON
-  const { summary, regions } = resultData;
+  const [data, setData] = useState<ResultData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadResultData().then(result => {
+      if (result.state === 'success') {
+        setData(result.data);
+      } else {
+        setError(result.error || 'Erro desconhecido');
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
+  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+
+  const { summary, regions } = data;
 
   // Criação do array de cards de resumo com métricas principais
   const summaryCards = [
     {
-      label: "Total Notificados",
-      value: summary.total_notified.toLocaleString("pt-BR"),
+      title: "Total Notificados",
+      value: formatNumber(summary.total_notified),
       icon: Users,
       color: "text-blue-600",
-      bg: "bg-blue-50",
+      bgColor: "bg-blue-50",
     },
     {
-      label: "Casos Confirmados",
-      value: summary.total_confirmed.toLocaleString("pt-BR"),
+      title: "Casos Confirmados",
+      value: formatNumber(summary.total_confirmed),
       icon: CheckCircle,
       color: "text-red-600",
-      bg: "bg-red-50",
+      bgColor: "bg-red-50",
     },
     {
-      label: "Regiões Críticas",
+      title: "Regiões Críticas",
       value: summary.critical_regions.toString(),
       icon: AlertTriangle,
       color: "text-red-600",
-      bg: "bg-red-50",
+      bgColor: "bg-red-50",
     },
     {
-      label: "Regiões Normais",
+      title: "Regiões Normais",
       value: summary.normal_regions.toString(),
       icon: MapPin,
       color: "text-green-600",
-      bg: "bg-green-50",
+      bgColor: "bg-green-50",
     },
   ];
 
@@ -90,16 +114,8 @@ export default function VisaoGeral() {
 
       {/* Grid de cards de resumo */}
       <div className="grid grid-cols-4 gap-4 mb-8">
-        {summaryCards.map(({ label, value, icon: Icon, color, bg }) => (
-          <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 mb-1">{label}</p>
-              <p className={`text-3xl font-semibold ${color}`}>{value}</p>
-            </div>
-            <div className={`w-10 h-10 ${bg} rounded-full flex items-center justify-center`}>
-              <Icon size={20} className={color} />
-            </div>
-          </div>
+        {summaryCards.map((card, index) => (
+          <SummaryCard key={index} {...card} />
         ))}
       </div>
 

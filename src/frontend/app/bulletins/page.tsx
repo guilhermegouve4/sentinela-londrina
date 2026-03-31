@@ -12,11 +12,36 @@
  * Os dados são extraídos automaticamente do portal da Prefeitura de Londrina.
  */
 
-import resultData from "../../public/result.json";
+"use client";
+
+import { useEffect, useState } from "react";
+import { loadResultData } from "../../lib/data";
+import { ResultData } from "../../types/result";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { ErrorMessage } from "../../components/ErrorMessage";
 import { FileText, Download, ExternalLink, Search, Filter } from "lucide-react";
 
 export default function BoletinsSemanais() {
-  const { meta } = resultData;
+  const [data, setData] = useState<ResultData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadResultData().then(result => {
+      if (result.state === 'success') {
+        setData(result.data);
+      } else {
+        setError(result.error || 'Erro desconhecido');
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
+  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+
+  const { meta } = data;
 
   // Simulação de lista de boletins PDF
   const boletins = [

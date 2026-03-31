@@ -13,11 +13,36 @@
  * Documento oficial para tomada de decisões e comunicação institucional.
  */
 
-import resultData from "../../public/result.json";
+"use client";
+
+import { useEffect, useState } from "react";
+import { loadResultData } from "../../lib/data";
+import { ResultData } from "../../types/result";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { ErrorMessage } from "../../components/ErrorMessage";
 import { ClipboardList, FileText, Printer, Share2, CheckCircle, AlertTriangle, MapPin } from "lucide-react";
 
 export default function RelatorioSituacional() {
-  const { summary, regions, meta } = resultData;
+  const [data, setData] = useState<ResultData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadResultData().then(result => {
+      if (result.state === 'success') {
+        setData(result.data);
+      } else {
+        setError(result.error || 'Erro desconhecido');
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
+  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+
+  const { summary, regions, meta } = data;
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
