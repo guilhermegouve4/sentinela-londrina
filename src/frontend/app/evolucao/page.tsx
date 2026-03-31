@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * Evolução Temporal - Análise de Tendências Semanais.
+ * 
+ * Esta página apresenta:
+ * - Série histórica semanal de casos confirmados
+ * - Comparação com semanas anteriores (diferenças positivas/negativas)
+ * - Distribuição visual por região em cada semana
+ * - Insights sobre picos, tendências e recuperações
+ * - Barras de progresso mostrando distribuição regional
+ * 
+ * Ajuda na identificação de padrões sazonais e tendências de crescimento.
+ */
+
 import resultData from "../../public/result.json";
 import { TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from "lucide-react";
 

@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * Filtros Avançados - Busca Específica por Parâmetros.
+ * 
+ * Esta página oferece controles para refinar dados epidemiológicos:
+ * - Filtro por região administrativa
+ * - Seleção de período (datas de início e fim)
+ * - Filtro por tipo de arbovirose (Dengue, Zika, Chikungunya)
+ * - Interface interativa para aplicação de filtros
+ * - Área de resultados (atualmente placeholder para futura implementação)
+ * 
+ * Permite análises detalhadas e segmentadas dos dados.
+ */
+
 import { Filter, Search, Calendar, MapPin, ChevronDown, RefreshCw } from "lucide-react";
 import { useState } from "react";
 

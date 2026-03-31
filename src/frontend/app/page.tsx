@@ -1,6 +1,18 @@
 import resultData from "../public/result.json";
-import { Users, CheckCircle, AlertTriangle, MapPin } from "lucide-react";
 
+/**
+ * Página inicial - Visão Geral das Regiões.
+ * 
+ * Esta é a tela principal do sistema Sentinela Londrina, exibindo:
+ * - Cards de resumo com métricas epidemiológicas totais
+ * - Tabela detalhada por região administrativa
+ * - Status de risco (Crítico/Alerta/Normal) baseado no LIRAa
+ * - Progresso visual da situação em cada região
+ * 
+ * Dados são carregados do arquivo result.json gerado pelo backend C++.
+ */
+
+// Definições de tipos e constantes para status
 type Status = "critical" | "alert" | "normal";
 
 const STATUS_LABEL: Record<Status, string> = {
@@ -21,6 +33,7 @@ const BAR_COLOR: Record<Status, string> = {
   normal:   "bg-green-500",
 };
 
+// Interface para os dados de região
 interface Region {
   name: string;
   confirmed: number;
@@ -29,9 +42,13 @@ interface Region {
   progress_pct: number;
 }
 
+import { Users, CheckCircle, AlertTriangle, MapPin } from "lucide-react";
+
 export default function VisaoGeral() {
+  // Extração dos dados de resumo e regiões do arquivo JSON
   const { summary, regions } = resultData;
 
+  // Criação do array de cards de resumo com métricas principais
   const summaryCards = [
     {
       label: "Total Notificados",
@@ -65,13 +82,13 @@ export default function VisaoGeral() {
 
   return (
     <div className="p-8">
-      {/* Header */}
+      {/* Header da página */}
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-gray-900">Visão Geral das Regiões</h1>
         <p className="text-sm text-gray-500 mt-1">Monitoramento em tempo real por região administrativa</p>
       </div>
 
-      {/* Cards de resumo */}
+      {/* Grid de cards de resumo */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {summaryCards.map(({ label, value, icon: Icon, color, bg }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between">
@@ -86,7 +103,7 @@ export default function VisaoGeral() {
         ))}
       </div>
 
-      {/* Tabela de regiões */}
+      {/* Tabela de regiões com dados detalhados */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full">
           <thead>
@@ -116,6 +133,7 @@ export default function VisaoGeral() {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
+                    {/* Barra de progresso visual */}
                     <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${BAR_COLOR[region.status]}`}
