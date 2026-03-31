@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sentinela Londrina - Frontend
 
-## Getting Started
+## Visão Geral
 
-First, run the development server:
+Este é o módulo frontend do projeto **Sentinela Londrina**, um sistema de monitoramento de arboviroses (Dengue, Zika, Chikungunya) que utiliza dados abertos da prefeitura de Londrina. O objetivo principal do frontend é fornecer um dashboard visual e interativo para apresentar os dados minerados e analisados pelo backend, permitindo filtros por localidade e visualização de relatórios situacionais.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tecnologias Utilizadas
+
+O frontend do Sentinela Londrina é construído com as seguintes tecnologias:
+
+*   **Next.js**: Framework React para construção de aplicações web modernas, com foco em performance e experiência do desenvolvedor.
+*   **TypeScript**: Superset do JavaScript que adiciona tipagem estática, melhorando a robustez e manutenibilidade do código.
+*   **Tailwind CSS**: Framework CSS utilitário para estilização rápida e responsiva.
+
+## Estrutura do Projeto
+
+A estrutura de pastas do frontend (`src/frontend`) segue a convenção de projetos Next.js:
+
+```
+sentinela-londrina/
+└── src/
+    └── frontend/       # Next.js app
+        ├── app/            # Rotas e páginas da aplicação
+        ├── components/     # Componentes React reutilizáveis
+        ├── lib/            # Funções utilitárias e lógica de negócio do frontend
+        ├── public/         # Ativos estáticos (imagens, fontes)
+        └── types/          # Definições de tipos TypeScript
+        ├── .gitignore
+        ├── eslint.config.mjs
+        ├── next.config.ts
+        ├── package-lock.json
+        ├── package.json
+        ├── postcss.config.mjs
+        └── tsconfig.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Como Rodar o Projeto (Frontend)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Para configurar e executar o ambiente de desenvolvimento do frontend, siga os passos abaixo:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Navegue até a pasta do frontend:**
+    ```bash
+    cd src/frontend
+    ```
 
-## Learn More
+2.  **Instale as dependências:**
+    ```bash
+    npm install
+    # ou
+    yarn install
+    # ou
+    pnpm install
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+3.  **Inicie o servidor de desenvolvimento:**
+    ```bash
+    npm run dev
+    # ou
+    yarn dev
+    # ou
+    pnpm dev
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4.  Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Status do Desenvolvimento (Frontend)
 
-## Deploy on Vercel
+O desenvolvimento do frontend está **em andamento**, com foco na implementação do dashboard visual. As principais tarefas e o status atual são:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+*   **Wireframes do dashboard:** ✅ Feito
+*   **Implementação do dashboard Next.js:** 🔄 Em andamento (Issue #19)
+*   **Integração frontend ↔ backend:** ⏳ Pendente (Issue #16)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Equipe de Desenvolvimento (Frontend)
+
+Os seguintes membros da equipe são responsáveis pelo desenvolvimento do frontend:
+
+*   **Gabriel Castro (gcastrodev)**: Responsável pelo Parser Python e Frontend Next.js.
+*   **Alan**: Responsável pelo Frontend Next.js.
+
+## Links Úteis
+
+*   [Documentação do Next.js](https://nextjs.org/docs)
+*   [Learn Next.js](https://nextjs.org/learn)
+*   [Repositório GitHub do Projeto](https://github.com/guilhermegouve4/sentinela-londrina)
