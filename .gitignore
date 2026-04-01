@@ -9,6 +9,7 @@
 *.pch
 build/
 cmake-build-*/
+sentinela
 
 # === Python ===
 __pycache__/
