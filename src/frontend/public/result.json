@@ -1,318 +1,836 @@
 {
-  "_comentario": "Schema do resultado.json — gerado pelo C++ e consumido pelo Next.js",
-  "_versao": "1.0",
-  "_gerado_em": "2026-03-24T00:00:00Z",
-
-  "meta": {
-    "generated_at": "2026-03-24T10:30:00Z",
-    "source_file": "boletim_londrina.csv",
-    "period": {
-      "month": "03/2026",
-      "year": 2026
-    },
-    "municipality": "Londrina",
-    "population": 555965
+  "highest_risk": {
+    "region": "Rural",
+    "risk": 28.2468
   },
-
-  "summary": {
-    "total_notified": 3807,
-    "total_confirmed": 295,
-    "total_discarded": 2570,
-    "total_under_analysis": 942,
-    "total_deaths": 0,
-    "total_zika": 0,
-    "total_chikungunya": 0,
-    "critical_regions": 2,
-    "alert_regions": 2,
-    "normal_regions": 2
-  },
-
   "regions": [
     {
-      "name": "Norte",
+      "name": "Central",
       "type": "urban",
-      "confirmed": 245,
-      "notified": 320,
-      "discarded": 60,
-      "under_analysis": 15,
-      "dengue_cases": 245,
-      "dengue_alarm_cases": 18,
-      "dengue_severe_cases": 3,
-      "zika_cases": 0,
-      "chikungunya_cases": 0,
-      "deaths": 2,
-      "risk": 4.2,
-      "status": "critical",
-      "progress_pct": 84
-    },
-    {
-      "name": "Sul",
-      "type": "urban",
-      "confirmed": 189,
-      "notified": 248,
-      "discarded": 47,
-      "under_analysis": 12,
-      "dengue_cases": 189,
-      "dengue_alarm_cases": 12,
-      "dengue_severe_cases": 1,
-      "zika_cases": 0,
-      "chikungunya_cases": 0,
-      "deaths": 1,
-      "risk": 3.8,
-      "status": "alert",
-      "progress_pct": 76
+      "risk": 18.8443,
+      "growth_rate": 1.68971,
+      "bulletins": [
+        {
+          "month": "11/2025",
+          "notified": 3513,
+          "confirmed": 662,
+          "discarded": 2749,
+          "underAnalysis": 103,
+          "dengueCases": 662,
+          "dengueAlarmCases": 70,
+          "dengueSevereCases": 89,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "10/2025",
+          "notified": 3384,
+          "confirmed": 651,
+          "discarded": 2632,
+          "underAnalysis": 101,
+          "dengueCases": 651,
+          "dengueAlarmCases": 40,
+          "dengueSevereCases": 5,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "09/2025",
+          "notified": 3036,
+          "confirmed": 620,
+          "discarded": 2312,
+          "underAnalysis": 104,
+          "dengueCases": 620,
+          "dengueAlarmCases": 117,
+          "dengueSevereCases": 17,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "08/2025",
+          "notified": 2807,
+          "confirmed": 610,
+          "discarded": 2138,
+          "underAnalysis": 59,
+          "dengueCases": 610,
+          "dengueAlarmCases": 44,
+          "dengueSevereCases": 1,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "07/2025",
+          "notified": 2631,
+          "confirmed": 606,
+          "discarded": 1970,
+          "underAnalysis": 55,
+          "dengueCases": 606,
+          "dengueAlarmCases": 58,
+          "dengueSevereCases": 7,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "06/2025",
+          "notified": 2528,
+          "confirmed": 533,
+          "discarded": 1682,
+          "underAnalysis": 313,
+          "dengueCases": 533,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "05/2025",
+          "notified": 2265,
+          "confirmed": 395,
+          "discarded": 1275,
+          "underAnalysis": 595,
+          "dengueCases": 395,
+          "dengueAlarmCases": 95,
+          "dengueSevereCases": 75,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "03/2025",
+          "notified": 1086,
+          "confirmed": 153,
+          "discarded": 602,
+          "underAnalysis": 332,
+          "dengueCases": 153,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "02/2025",
+          "notified": 584,
+          "confirmed": 58,
+          "discarded": 345,
+          "underAnalysis": 181,
+          "dengueCases": 58,
+          "dengueAlarmCases": 25,
+          "dengueSevereCases": 8,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "01/2025",
+          "notified": 205,
+          "confirmed": 20,
+          "discarded": 96,
+          "underAnalysis": 89,
+          "dengueCases": 20,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        }
+      ]
     },
     {
       "name": "Leste",
       "type": "urban",
-      "confirmed": 156,
-      "notified": 205,
-      "discarded": 38,
-      "under_analysis": 11,
-      "dengue_cases": 156,
-      "dengue_alarm_cases": 9,
-      "dengue_severe_cases": 0,
-      "zika_cases": 0,
-      "chikungunya_cases": 0,
-      "deaths": 0,
-      "risk": 2.9,
-      "status": "alert",
-      "progress_pct": 58
+      "risk": 18.8438,
+      "growth_rate": 1.72414,
+      "bulletins": [
+        {
+          "month": "11/2025",
+          "notified": 3131,
+          "confirmed": 590,
+          "discarded": 2449,
+          "underAnalysis": 92,
+          "dengueCases": 590,
+          "dengueAlarmCases": 62,
+          "dengueSevereCases": 80,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "10/2025",
+          "notified": 3016,
+          "confirmed": 580,
+          "discarded": 2346,
+          "underAnalysis": 90,
+          "dengueCases": 580,
+          "dengueAlarmCases": 36,
+          "dengueSevereCases": 4,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "09/2025",
+          "notified": 2705,
+          "confirmed": 552,
+          "discarded": 2060,
+          "underAnalysis": 93,
+          "dengueCases": 552,
+          "dengueAlarmCases": 104,
+          "dengueSevereCases": 15,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "08/2025",
+          "notified": 2501,
+          "confirmed": 544,
+          "discarded": 1905,
+          "underAnalysis": 52,
+          "dengueCases": 544,
+          "dengueAlarmCases": 39,
+          "dengueSevereCases": 1,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "07/2025",
+          "notified": 2345,
+          "confirmed": 540,
+          "discarded": 1756,
+          "underAnalysis": 49,
+          "dengueCases": 540,
+          "dengueAlarmCases": 51,
+          "dengueSevereCases": 6,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "06/2025",
+          "notified": 2253,
+          "confirmed": 475,
+          "discarded": 1499,
+          "underAnalysis": 279,
+          "dengueCases": 475,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "05/2025",
+          "notified": 2018,
+          "confirmed": 352,
+          "discarded": 1136,
+          "underAnalysis": 530,
+          "dengueCases": 352,
+          "dengueAlarmCases": 84,
+          "dengueSevereCases": 67,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "03/2025",
+          "notified": 968,
+          "confirmed": 136,
+          "discarded": 537,
+          "underAnalysis": 296,
+          "dengueCases": 136,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "02/2025",
+          "notified": 521,
+          "confirmed": 51,
+          "discarded": 308,
+          "underAnalysis": 162,
+          "dengueCases": 51,
+          "dengueAlarmCases": 22,
+          "dengueSevereCases": 7,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "01/2025",
+          "notified": 183,
+          "confirmed": 18,
+          "discarded": 85,
+          "underAnalysis": 79,
+          "dengueCases": 18,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        }
+      ]
+    },
+    {
+      "name": "Norte",
+      "type": "urban",
+      "risk": 18.8398,
+      "growth_rate": 1.7094,
+      "bulletins": [
+        {
+          "month": "11/2025",
+          "notified": 8843,
+          "confirmed": 1666,
+          "discarded": 6918,
+          "underAnalysis": 259,
+          "dengueCases": 1666,
+          "dengueAlarmCases": 176,
+          "dengueSevereCases": 225,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 3
+        },
+        {
+          "month": "10/2025",
+          "notified": 8518,
+          "confirmed": 1638,
+          "discarded": 6625,
+          "underAnalysis": 254,
+          "dengueCases": 1638,
+          "dengueAlarmCases": 100,
+          "dengueSevereCases": 11,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 3
+        },
+        {
+          "month": "09/2025",
+          "notified": 7641,
+          "confirmed": 1560,
+          "discarded": 5819,
+          "underAnalysis": 262,
+          "dengueCases": 1560,
+          "dengueAlarmCases": 295,
+          "dengueSevereCases": 42,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 3
+        },
+        {
+          "month": "08/2025",
+          "notified": 7065,
+          "confirmed": 1535,
+          "discarded": 5382,
+          "underAnalysis": 147,
+          "dengueCases": 1535,
+          "dengueAlarmCases": 110,
+          "dengueSevereCases": 2,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 3
+        },
+        {
+          "month": "07/2025",
+          "notified": 6622,
+          "confirmed": 1526,
+          "discarded": 4959,
+          "underAnalysis": 138,
+          "dengueCases": 1526,
+          "dengueAlarmCases": 145,
+          "dengueSevereCases": 18,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 3
+        },
+        {
+          "month": "06/2025",
+          "notified": 6362,
+          "confirmed": 1341,
+          "discarded": 4233,
+          "underAnalysis": 788,
+          "dengueCases": 1341,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 3
+        },
+        {
+          "month": "05/2025",
+          "notified": 5700,
+          "confirmed": 993,
+          "discarded": 3209,
+          "underAnalysis": 1498,
+          "dengueCases": 993,
+          "dengueAlarmCases": 238,
+          "dengueSevereCases": 190,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 2
+        },
+        {
+          "month": "03/2025",
+          "notified": 2734,
+          "confirmed": 384,
+          "discarded": 1516,
+          "underAnalysis": 835,
+          "dengueCases": 384,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "02/2025",
+          "notified": 1470,
+          "confirmed": 145,
+          "discarded": 869,
+          "underAnalysis": 456,
+          "dengueCases": 145,
+          "dengueAlarmCases": 62,
+          "dengueSevereCases": 20,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "01/2025",
+          "notified": 515,
+          "confirmed": 51,
+          "discarded": 241,
+          "underAnalysis": 224,
+          "dengueCases": 51,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        }
+      ]
     },
     {
       "name": "Oeste",
       "type": "urban",
-      "confirmed": 134,
-      "notified": 176,
-      "discarded": 33,
-      "under_analysis": 9,
-      "dengue_cases": 134,
-      "dengue_alarm_cases": 7,
-      "dengue_severe_cases": 0,
-      "zika_cases": 0,
-      "chikungunya_cases": 0,
-      "deaths": 0,
-      "risk": 2.5,
-      "status": "alert",
-      "progress_pct": 50
-    },
-    {
-      "name": "Central",
-      "type": "urban",
-      "confirmed": 98,
-      "notified": 128,
-      "discarded": 24,
-      "under_analysis": 6,
-      "dengue_cases": 98,
-      "dengue_alarm_cases": 4,
-      "dengue_severe_cases": 0,
-      "zika_cases": 0,
-      "chikungunya_cases": 0,
-      "deaths": 0,
-      "risk": 1.8,
-      "status": "normal",
-      "progress_pct": 36
+      "risk": 18.8438,
+      "growth_rate": 1.72414,
+      "bulletins": [
+        {
+          "month": "11/2025",
+          "notified": 3131,
+          "confirmed": 590,
+          "discarded": 2449,
+          "underAnalysis": 92,
+          "dengueCases": 590,
+          "dengueAlarmCases": 62,
+          "dengueSevereCases": 80,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "10/2025",
+          "notified": 3016,
+          "confirmed": 580,
+          "discarded": 2346,
+          "underAnalysis": 90,
+          "dengueCases": 580,
+          "dengueAlarmCases": 36,
+          "dengueSevereCases": 4,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "09/2025",
+          "notified": 2705,
+          "confirmed": 552,
+          "discarded": 2060,
+          "underAnalysis": 93,
+          "dengueCases": 552,
+          "dengueAlarmCases": 104,
+          "dengueSevereCases": 15,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "08/2025",
+          "notified": 2501,
+          "confirmed": 544,
+          "discarded": 1905,
+          "underAnalysis": 52,
+          "dengueCases": 544,
+          "dengueAlarmCases": 39,
+          "dengueSevereCases": 1,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "07/2025",
+          "notified": 2345,
+          "confirmed": 540,
+          "discarded": 1756,
+          "underAnalysis": 49,
+          "dengueCases": 540,
+          "dengueAlarmCases": 51,
+          "dengueSevereCases": 6,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "06/2025",
+          "notified": 2253,
+          "confirmed": 475,
+          "discarded": 1499,
+          "underAnalysis": 279,
+          "dengueCases": 475,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "05/2025",
+          "notified": 2018,
+          "confirmed": 352,
+          "discarded": 1136,
+          "underAnalysis": 530,
+          "dengueCases": 352,
+          "dengueAlarmCases": 84,
+          "dengueSevereCases": 67,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "03/2025",
+          "notified": 968,
+          "confirmed": 136,
+          "discarded": 537,
+          "underAnalysis": 296,
+          "dengueCases": 136,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "02/2025",
+          "notified": 521,
+          "confirmed": 51,
+          "discarded": 308,
+          "underAnalysis": 162,
+          "dengueCases": 51,
+          "dengueAlarmCases": 22,
+          "dengueSevereCases": 7,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "01/2025",
+          "notified": 183,
+          "confirmed": 18,
+          "discarded": 85,
+          "underAnalysis": 79,
+          "dengueCases": 18,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        }
+      ]
     },
     {
       "name": "Rural",
       "type": "rural",
-      "confirmed": 67,
-      "notified": 88,
-      "discarded": 16,
-      "under_analysis": 5,
-      "dengue_cases": 67,
-      "dengue_alarm_cases": 2,
-      "dengue_severe_cases": 0,
-      "zika_cases": 0,
-      "chikungunya_cases": 0,
-      "deaths": 0,
-      "risk": 1.2,
-      "status": "normal",
-      "progress_pct": 24
-    }
-  ],
-
-  "monthly_series": [
-    {
-      "month": "01/2026",
-      "year": 2026,
-      "date_range": "01/01/2026-31/01/2026",
-      "total_confirmed": 52,
-      "total_notified": 68,
-      "total_deaths": 0,
-      "by_region": [
-        { "region": "Norte",   "confirmed": 18, "notified": 24, "risk": 1.1, "status": "normal" },
-        { "region": "Sul",     "confirmed": 12, "notified": 16, "risk": 0.9, "status": "normal" },
-        { "region": "Leste",   "confirmed": 9,  "notified": 12, "risk": 0.7, "status": "normal" },
-        { "region": "Oeste",   "confirmed": 7,  "notified": 9,  "risk": 0.6, "status": "normal" },
-        { "region": "Central", "confirmed": 4,  "notified": 5,  "risk": 0.4, "status": "normal" },
-        { "region": "Rural",   "confirmed": 2,  "notified": 2,  "risk": 0.2, "status": "normal" }
+      "risk": 28.2468,
+      "growth_rate": 1.55642,
+      "bulletins": [
+        {
+          "month": "11/2025",
+          "notified": 2772,
+          "confirmed": 522,
+          "discarded": 2170,
+          "underAnalysis": 80,
+          "dengueCases": 522,
+          "dengueAlarmCases": 57,
+          "dengueSevereCases": 70,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 1
+        },
+        {
+          "month": "10/2025",
+          "notified": 2670,
+          "confirmed": 514,
+          "discarded": 2077,
+          "underAnalysis": 79,
+          "dengueCases": 514,
+          "dengueAlarmCases": 31,
+          "dengueSevereCases": 3,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 1
+        },
+        {
+          "month": "09/2025",
+          "notified": 2395,
+          "confirmed": 489,
+          "discarded": 1825,
+          "underAnalysis": 81,
+          "dengueCases": 489,
+          "dengueAlarmCases": 93,
+          "dengueSevereCases": 13,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 1
+        },
+        {
+          "month": "08/2025",
+          "notified": 2215,
+          "confirmed": 481,
+          "discarded": 1688,
+          "underAnalysis": 47,
+          "dengueCases": 481,
+          "dengueAlarmCases": 35,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 1
+        },
+        {
+          "month": "07/2025",
+          "notified": 2076,
+          "confirmed": 479,
+          "discarded": 1554,
+          "underAnalysis": 42,
+          "dengueCases": 479,
+          "dengueAlarmCases": 45,
+          "dengueSevereCases": 7,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 1
+        },
+        {
+          "month": "06/2025",
+          "notified": 1993,
+          "confirmed": 419,
+          "discarded": 1327,
+          "underAnalysis": 247,
+          "dengueCases": 419,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 1
+        },
+        {
+          "month": "05/2025",
+          "notified": 1786,
+          "confirmed": 311,
+          "discarded": 1006,
+          "underAnalysis": 470,
+          "dengueCases": 311,
+          "dengueAlarmCases": 75,
+          "dengueSevereCases": 59,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 0
+        },
+        {
+          "month": "03/2025",
+          "notified": 858,
+          "confirmed": 120,
+          "discarded": 474,
+          "underAnalysis": 260,
+          "dengueCases": 120,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 0
+        },
+        {
+          "month": "02/2025",
+          "notified": 461,
+          "confirmed": 46,
+          "discarded": 272,
+          "underAnalysis": 143,
+          "dengueCases": 46,
+          "dengueAlarmCases": 20,
+          "dengueSevereCases": 7,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "01/2025",
+          "notified": 161,
+          "confirmed": 16,
+          "discarded": 76,
+          "underAnalysis": 70,
+          "dengueCases": 16,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        }
       ]
     },
     {
-      "month": "02/2026",
-      "year": 2026,
-      "date_range": "01/02/2026-28/02/2026",
-      "total_confirmed": 68,
-      "total_notified": 89,
-      "total_deaths": 0,
-      "by_region": [
-        { "region": "Norte",   "confirmed": 25, "notified": 33, "risk": 1.5, "status": "normal" },
-        { "region": "Sul",     "confirmed": 16, "notified": 21, "risk": 1.2, "status": "normal" },
-        { "region": "Leste",   "confirmed": 11, "notified": 14, "risk": 0.9, "status": "normal" },
-        { "region": "Oeste",   "confirmed": 9,  "notified": 12, "risk": 0.7, "status": "normal" },
-        { "region": "Central", "confirmed": 5,  "notified": 6,  "risk": 0.5, "status": "normal" },
-        { "region": "Rural",   "confirmed": 2,  "notified": 3,  "risk": 0.2, "status": "normal" }
-      ]
-    },
-    {
-      "month": "03/2026",
-      "year": 2026,
-      "date_range": "01/03/2026-31/03/2026",
-      "total_confirmed": 295,
-      "total_notified": 389,
-      "total_deaths": 2,
-      "by_region": [
-        { "region": "Norte",   "confirmed": 67, "notified": 89, "risk": 4.2, "status": "critical" },
-        { "region": "Sul",     "confirmed": 54, "notified": 71, "risk": 3.8, "status": "critical" },
-        { "region": "Leste",   "confirmed": 43, "notified": 57, "risk": 2.9, "status": "alert" },
-        { "region": "Oeste",   "confirmed": 38, "notified": 50, "risk": 2.5, "status": "alert" },
-        { "region": "Central", "confirmed": 32, "notified": 42, "risk": 1.8, "status": "normal" },
-        { "region": "Rural",   "confirmed": 19, "notified": 25, "risk": 1.2, "status": "normal" }
-      ]
-    }
-  ],
-
-  "alerts": [
-    {
-      "region": "Norte",
-      "level": "critical",
-      "message": "LIRAa ultrapassou 4.0% — Risco de proliferação alto",
-      "triggered_at": "2026-03-17T14:32:00Z"
-    },
-    {
-      "region": "Sul",
-      "level": "critical",
-      "message": "Taxa de crescimento acima de 15% na última semana",
-      "triggered_at": "2026-03-17T09:15:00Z"
-    },
-    {
-      "region": "Leste",
-      "level": "alert",
-      "message": "Aproximação do limite crítico — LIRAa em 2.9%",
-      "triggered_at": "2026-03-16T16:45:00Z"
-    },
-    {
-      "region": "Oeste",
-      "level": "alert",
-      "message": "Aumento gradual de casos nas últimas 3 semanas",
-      "triggered_at": "2026-03-15T11:20:00Z"
-    }
-  ],
-
-  "ubs_hierarchy": [
-    {
-      "name": "Sede Regional Londrina",
-      "type": "sede",
-      "children": [
+      "name": "Sul",
+      "type": "urban",
+      "risk": 18.827,
+      "growth_rate": 1.58228,
+      "bulletins": [
         {
-          "name": "Região Urbana Norte",
-          "type": "region",
-          "confirmed": 245,
-          "status": "critical",
-          "children": [
-            {
-              "name": "UBS Cinco Conjuntos",
-              "type": "ubs",
-              "confirmed": 89,
-              "status": "critical",
-              "children": [
-                { "name": "Cinco Conjuntos", "type": "bairro", "confirmed": 52, "status": "critical" },
-                { "name": "Maravilha",        "type": "bairro", "confirmed": 37, "status": "critical" }
-              ]
-            },
-            {
-              "name": "UBS União da Vitória",
-              "type": "ubs",
-              "confirmed": 67,
-              "status": "critical",
-              "children": [
-                { "name": "União da Vitória", "type": "bairro", "confirmed": 67, "status": "critical" }
-              ]
-            }
-          ]
+          "month": "11/2025",
+          "notified": 5115,
+          "confirmed": 963,
+          "discarded": 4001,
+          "underAnalysis": 150,
+          "dengueCases": 963,
+          "dengueAlarmCases": 102,
+          "dengueSevereCases": 130,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 2
         },
         {
-          "name": "Região Urbana Sul",
-          "type": "region",
-          "confirmed": 189,
-          "status": "critical",
-          "children": [
-            {
-              "name": "UBS Jardim do Sol",
-              "type": "ubs",
-              "confirmed": 112,
-              "status": "critical",
-              "children": [
-                { "name": "Jardim do Sol", "type": "bairro", "confirmed": 112, "status": "critical" }
-              ]
-            }
-          ]
+          "month": "10/2025",
+          "notified": 4926,
+          "confirmed": 948,
+          "discarded": 3832,
+          "underAnalysis": 147,
+          "dengueCases": 948,
+          "dengueAlarmCases": 58,
+          "dengueSevereCases": 7,
+          "zikaCases": 0,
+          "chikungunyaCases": 1,
+          "deaths": 2
         },
         {
-          "name": "Região Urbana Centro",
-          "type": "region",
-          "confirmed": 98,
-          "status": "normal",
-          "children": [
-            {
-              "name": "UBS Centro",
-              "type": "ubs",
-              "confirmed": 98,
-              "status": "normal",
-              "children": [
-                { "name": "Centro",   "type": "bairro", "confirmed": 56, "status": "normal" },
-                { "name": "Catedral", "type": "bairro", "confirmed": 42, "status": "normal" }
-              ]
-            }
-          ]
+          "month": "09/2025",
+          "notified": 4419,
+          "confirmed": 902,
+          "discarded": 3366,
+          "underAnalysis": 151,
+          "dengueCases": 902,
+          "dengueAlarmCases": 171,
+          "dengueSevereCases": 24,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 2
         },
         {
-          "name": "Distrito Rural",
-          "type": "region",
-          "confirmed": 67,
-          "status": "normal",
-          "children": [
-            {
-              "name": "UBS Warta",
-              "type": "ubs",
-              "confirmed": 38,
-              "status": "normal",
-              "children": [
-                { "name": "Warta", "type": "bairro", "confirmed": 38, "status": "normal" }
-              ]
-            },
-            {
-              "name": "UBS Lerroville",
-              "type": "ubs",
-              "confirmed": 29,
-              "status": "normal",
-              "children": [
-                { "name": "Lerroville", "type": "bairro", "confirmed": 29, "status": "normal" }
-              ]
-            }
-          ]
+          "month": "08/2025",
+          "notified": 4086,
+          "confirmed": 888,
+          "discarded": 3113,
+          "underAnalysis": 85,
+          "dengueCases": 888,
+          "dengueAlarmCases": 64,
+          "dengueSevereCases": 1,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 2
+        },
+        {
+          "month": "07/2025",
+          "notified": 3830,
+          "confirmed": 882,
+          "discarded": 2868,
+          "underAnalysis": 80,
+          "dengueCases": 882,
+          "dengueAlarmCases": 84,
+          "dengueSevereCases": 11,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 2
+        },
+        {
+          "month": "06/2025",
+          "notified": 3680,
+          "confirmed": 775,
+          "discarded": 2449,
+          "underAnalysis": 456,
+          "dengueCases": 775,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 2
+        },
+        {
+          "month": "05/2025",
+          "notified": 3297,
+          "confirmed": 574,
+          "discarded": 1856,
+          "underAnalysis": 866,
+          "dengueCases": 574,
+          "dengueAlarmCases": 138,
+          "dengueSevereCases": 110,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 1
+        },
+        {
+          "month": "03/2025",
+          "notified": 1582,
+          "confirmed": 222,
+          "discarded": 877,
+          "underAnalysis": 483,
+          "dengueCases": 222,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "02/2025",
+          "notified": 850,
+          "confirmed": 84,
+          "discarded": 502,
+          "underAnalysis": 264,
+          "dengueCases": 84,
+          "dengueAlarmCases": 36,
+          "dengueSevereCases": 12,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
+        },
+        {
+          "month": "01/2025",
+          "notified": 298,
+          "confirmed": 29,
+          "discarded": 140,
+          "underAnalysis": 129,
+          "dengueCases": 29,
+          "dengueAlarmCases": 0,
+          "dengueSevereCases": 0,
+          "zikaCases": 0,
+          "chikungunyaCases": 0,
+          "deaths": 0
         }
       ]
     }
-  ],
-
-  "status_history": [
-    { "region": "Norte",   "status": "critical", "since": "2026-02-25", "days_in_status": 20 },
-    { "region": "Sul",     "status": "critical", "since": "2026-03-04", "days_in_status": 13 },
-    { "region": "Leste",   "status": "alert",    "since": "2026-03-11", "days_in_status": 6  },
-    { "region": "Oeste",   "status": "alert",    "since": "2026-03-15", "days_in_status": 2  },
-    { "region": "Central", "status": "normal",   "since": null,         "days_in_status": null },
-    { "region": "Rural",   "status": "normal",   "since": null,         "days_in_status": null }
   ]
 }
