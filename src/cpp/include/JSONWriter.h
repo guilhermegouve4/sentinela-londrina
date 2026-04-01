@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "LinkedList.h"
+#include "SituationalAnalysis.h"
 
 class JSONWriter {
 public:
