@@ -14,7 +14,7 @@ A Secretaria Municipal de Saúde de Londrina publica periodicamente boletins epi
 
 - **Ingere** dados extraídos dos boletins epidemiológicos (CSV)
 - **Organiza** em listas encadeadas dinâmicas por região e cronologia
-- **Analisa** taxas de incidência, índice LIRAa e crescimento entre boletins
+- **Analisa** risco por região, status epidemiológico e taxa de crescimento entre boletins
 - **Apresenta** dashboard visual com filtros por localidade
 
 ## Stack
@@ -46,12 +46,36 @@ sentinela-londrina/
 
 | Entrega | Data | Status |
 |---------|------|--------|
-| Parcial (1º bim) | 06/04/2026 | 🔴 Em andamento |
+| Parcial (1º bim) | 06/04/2026 | 🟡 Em andamento |
 | Final (2º bim) | 08/06/2026 | ⚪ Não iniciada |
 
 ## Como rodar
 
-> Em breve.
+### Backend C++
+
+```bash
+# Compilar
+g++ -std=c++17 -o sentinela src/cpp/src/main.cpp src/cpp/src/LinkedList.cpp src/cpp/src/Locality.cpp src/cpp/src/UrbanRegion.cpp src/cpp/src/RuralDistrict.cpp src/cpp/src/MonthlyBulletin.cpp src/cpp/src/Node.cpp src/cpp/src/CSVReader.cpp src/cpp/src/JSONWriter.cpp src/cpp/src/SituationalAnalysis.cpp
+
+# Executar (gera src/frontend/public/result.json)
+./sentinela
+```
+
+### Parser Python
+
+```bash
+pip install -r requirements.txt
+python src/parser/ai_scan.py data/raw/<boletim>.pdf
+```
+
+### Frontend
+
+```bash
+cd src/frontend
+npm install
+npm run dev
+# Acesse http://localhost:3000
+```
 
 ## Equipe
 
