@@ -1,13 +1,14 @@
 {
   "highest_risk": {
     "region": "Rural",
-    "risk": 28.2468
+    "risk": 23.539
   },
   "regions": [
     {
       "name": "Central",
       "type": "urban",
       "risk": 18.8443,
+      "status": "alert",
       "growth_rate": 1.68971,
       "bulletins": [
         {
@@ -146,6 +147,7 @@
       "name": "Leste",
       "type": "urban",
       "risk": 18.8438,
+      "status": "alert",
       "growth_rate": 1.72414,
       "bulletins": [
         {
@@ -284,6 +286,7 @@
       "name": "Norte",
       "type": "urban",
       "risk": 18.8398,
+      "status": "alert",
       "growth_rate": 1.7094,
       "bulletins": [
         {
@@ -422,6 +425,7 @@
       "name": "Oeste",
       "type": "urban",
       "risk": 18.8438,
+      "status": "alert",
       "growth_rate": 1.72414,
       "bulletins": [
         {
@@ -559,7 +563,8 @@
     {
       "name": "Rural",
       "type": "rural",
-      "risk": 28.2468,
+      "risk": 23.539,
+      "status": "critical",
       "growth_rate": 1.55642,
       "bulletins": [
         {
@@ -698,6 +703,7 @@
       "name": "Sul",
       "type": "urban",
       "risk": 18.827,
+      "status": "alert",
       "growth_rate": 1.58228,
       "bulletins": [
         {

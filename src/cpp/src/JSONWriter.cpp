@@ -36,6 +36,7 @@ void JSONWriter::write(LinkedList &list, const std::string &outputPath) {
         file << "      \"name\": \""        << locality->getName() << "\",\n";
         file << "      \"type\": \""        << (locality->isUrban() ? "urban" : "rural") << "\",\n";
         file << "      \"risk\": "          << locality->calculateRisk() << ",\n";
+        file << "      \"status\": \""       << sa.getStatus(locality->calculateRisk()) << "\",\n";
         file << "      \"growth_rate\": "   << growth.growthRate << ",\n";
         file << "      \"bulletins\": [\n";
 

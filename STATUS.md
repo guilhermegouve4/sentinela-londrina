@@ -68,6 +68,10 @@ Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedLis
 | 011 | Sublista de boletins: `head` = boletim mais recente (insert no início) | 28/03/2026 |
 | 012 | Serialização JSON em classe `JSONWriter` separada — `main` só orquestra | 30/03/2026 |
 | 013 | `SituationalAnalysis` calcula análises — `JSONWriter` serializa resultados | 01/04/2026 |
+| 014 | Fator 1.25 no risco do `RuralDistrict` — decisão de design baseada em subnotificação estrutural rural (literatura científica: PMC/NIH 2025, Springer Nature 2025) | 01/04/2026 |
+| 015 | Status por região: `normal` (risk < 10%), `alert` (10-20%), `critical` (> 20%) — baseado na taxa de confirmação | 01/04/2026 |
+| 016 | NaN para `growth_rate` quando penúltimo boletim tem 0 confirmados e último > 0 — crescimento incalculável percentualmente | 01/04/2026 |
+| 017 | Ranking de regiões por risco feito no frontend — LinkedList permanece alfabética conforme requisito acadêmico | 01/04/2026 |
 
 ## BLOQUEIOS
 
