@@ -27,6 +27,12 @@ HighestRiskRegion SituationalAnalysis::highestRisk(LinkedList &list) {
     return result;
 }
 
+std::string SituationalAnalysis::getStatus(double risk) {
+    if (risk >= 20.0) return "critical";
+    if (risk >= 10.0) return "alert";
+    return "normal";
+}
+
 RegionGrowth SituationalAnalysis::growthRate(LinkedList &list, const std::string &regionName) {
     RegionGrowth result;
     result.name = regionName;
