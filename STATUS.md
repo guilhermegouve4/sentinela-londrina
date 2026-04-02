@@ -1,10 +1,10 @@
 # STATUS — AEP Sentinela Londrina
 
-> Última atualização: 30/03/2026 | Semana 2 de 3 | Entrega: 06/04/2026 (7 dias)
+> Última atualização: 01/04/2026 | Semana 3 de 3 | Entrega: 06/04/2026 (5 dias)
 
 ## FASE ATUAL
 
-Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVReader` e `JSONWriter`. Parser processando 10 boletins reais. Faltam `main.cpp` e UML.
+Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedList → result.json. Frontend com dados reais mas schema desalinhado com o mock do Gabriel — alinhamento pendente.
 
 ## PRAZOS
 
@@ -15,7 +15,7 @@ Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVRe
 
 ## PROGRESSO
 
-1º Bim (06/04): 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 90%
+1º Bim (06/04): 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 95%
 2º Bim (08/06): ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜  0%
 
 ## ENTREGÁVEIS DO 1º BIMESTRE
@@ -30,14 +30,15 @@ Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVRe
 | #5  | Classe `MonthlyBulletin` (C++) | Guilherme | ✅ Feito |
 | #4  | Herança: `UrbanRegion` / `RuralDistrict` | Guilherme | ✅ Feito |
 | #3  | `LinkedList` com `insertOrdered`, `find`, `remove` | Guilherme | ✅ Feito |
-| —   | 11 boletins reais processados (2025) | Gabriel | ✅ Feito |
+| —   | 10 boletins reais processados (2025) | Gabriel | ✅ Feito |
 | —   | Download automático de PDFs (`download_bulletins.py`) | Gabriel | ✅ Feito |
 | #9  | Wireframes do dashboard | Gabriel + Alan | ✅ Feito |
-| #19 | Dashboard Next.js | Gabriel + Alan | 🔄 Em andamento |
-| #11 | Documento ABNT — entrega parcial | Grupo todo | 🔄 Em andamento |
 | #6  | `CSVReader` C++ | Guilherme | ✅ Feito |
 | #28 | `JSONWriter` C++ | Guilherme | ✅ Feito |
-| #12 | Integração end-to-end: CSV → C++ → result.json | Guilherme | ⏳ Pendente |
+| #7  | `SituationalAnalysis` C++ | Guilherme | ✅ Feito |
+| #12 | Integração end-to-end: CSV → C++ → result.json | Guilherme | ✅ Feito |
+| #19 | Dashboard Next.js | Gabriel + Alan | 🔄 Em andamento |
+| #11 | Documento ABNT — entrega parcial | Grupo todo | 🔄 Em andamento |
 | #10 | Diagrama de Classes UML | Alan | 🔄 Em andamento |
 
 ## O QUE FOI FEITO (por sessão)
@@ -45,9 +46,10 @@ Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVRe
 - **16/03** — Sessão 0: stack, equipe, prazos, ADRs iniciais. Repo criado.
 - **17-22/03** — Sessão 1-3: `Locality.h/.cpp`, `Node.h/.cpp`, contrato CSV, frontend Next.js inicializado, benchmark de bibliotecas PDF, wireframes do dashboard (Gabriel).
 - **23-25/03** — Sessão 4: `Node` implementado. Documento AEP iniciado. `ai_scan.py` (parser Gemini completo), `result.json` mock para o frontend.
-- **27/03** — Gabriel: 11 boletins 2025 processados, CSVs em `data/processed/`. Gabriel: `download_bulletins.py` (download automático de PDFs).
+- **27/03** — Gabriel: 10 boletins 2025 processados, CSVs em `data/processed/`. Gabriel: `download_bulletins.py` (download automático de PDFs).
 - **28/03** — Sessão 5: `MonthlyBulletin`, `UrbanRegion`, `RuralDistrict`, `LinkedList` implementados. Reorganização de pastas. Refactor: `WeeklyBulletin` → `MonthlyBulletin`, campo `week` → `month`.
-- **30/03** — Sessão 6: `CSVReader` implementado. `JSONWriter` implementado como classe separada (ADR 012). `getHead()` adicionado em `LinkedList` e `Locality`. Headers dos CSVs corrigidos (`week` → `month`). Gabriel: estrutura de rotas do Next.js, fix do parser.
+- **30/03** — Sessão 6: `CSVReader` implementado. `JSONWriter` implementado como classe separada (ADR 012). `getHead()` adicionado em `LinkedList` e `Locality`. Headers dos CSVs corrigidos (`week` → `month`). Gabriel: estrutura de rotas do Next.js, fix do parser, dashboard avançado.
+- **01/04** — Sessão 7: `main.cpp` implementado. `SituationalAnalysis` implementada (maior risco + taxa de crescimento). `JSONWriter` atualizado com novos campos. Pipeline end-to-end validado. Issues de inconsistência no parser abertas (#38, #39, #40, #41). Limpeza do repo (docs obsoletos, run_dev.sh, README frontend reescrito).
 
 ## DECISÕES DE ARQUITETURA (ADRs)
 
@@ -65,16 +67,20 @@ Implementação. Backend C++ com estrutura de classes completa, incluindo `CSVRe
 | 010 | Código-fonte em inglês | ~20/03/2026 |
 | 011 | Sublista de boletins: `head` = boletim mais recente (insert no início) | 28/03/2026 |
 | 012 | Serialização JSON em classe `JSONWriter` separada — `main` só orquestra | 30/03/2026 |
+| 013 | `SituationalAnalysis` calcula análises — `JSONWriter` serializa resultados | 01/04/2026 |
 
 ## BLOQUEIOS
 
-- UML ainda não criado
-- Parser ainda distribui por percentuais fixos — validar se percentuais somando 110.9% é intencional
+- UML ainda não criado (Alan)
+- Frontend desalinhado com schema real do backend — alinhamento pendente com Gabriel
+- Parser com inconsistências nos dados (#38, #39, #40, #41)
 
-## PRÓXIMOS PASSOS (Semana 2)
+## PRÓXIMOS PASSOS (Semana 3 — última antes da entrega)
 
 | Dia | Quem | O quê |
 |-----|------|-------|
-| Ter 31 | Guilherme | `main.cpp` — orquestração end-to-end |
-| Ter 31 | Alan | UML de classes |
-| Ter 31 | Grupo | Reunião: status check — código, wireframes, documento |
+| 01/04 | Gabriel | Alinhar schema do frontend com o result.json real |
+| 01/04 | Gabriel | Corrigir issues #38, #39, #40, #41 no parser |
+| Esta semana | Alan | UML de classes |
+| Esta semana | Grupo | Documento ABNT — entrega parcial |
+| 06/04 | Grupo | Entrega parcial |
