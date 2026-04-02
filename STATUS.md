@@ -16,7 +16,7 @@ Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedLis
 ## PROGRESSO
 
 1º Bim (06/04): 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 95%
-2º Bim (08/06): ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜  0%
+2º Bim (08/06): 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 20%
 
 ## ENTREGÁVEIS DO 1º BIMESTRE
 
@@ -72,8 +72,18 @@ Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedLis
 ## BLOQUEIOS
 
 - UML ainda não criado (Alan)
-- Frontend desalinhado com schema real do backend — alinhamento pendente com Gabriel
+- Frontend usando schema do mock — Gabriel vai atualizar pra consumir o result.json real
 - Parser com inconsistências nos dados (#38, #39, #40, #41)
+
+## ENTREGÁVEIS DO 2º BIMESTRE
+
+| Issue | Item | Responsável | Status |
+|-------|------|-------------|--------|
+| — | Refatorações do feedback dos professores | Grupo | ⏳ Aguarda parcial |
+| #7 | `SituationalAnalysis` — análises completas | Guilherme | 🔄 Parcial |
+| #19 | Dashboard frontend completo | Gabriel + Alan | 🔄 Em andamento |
+| #18 | Pitch de 5 minutos | Grupo | ⏳ Pendente |
+| — | Interface de saída refinada | Grupo | ⏳ Pendente |
 
 ## PRÓXIMOS PASSOS (Semana 3 — última antes da entrega)
 
