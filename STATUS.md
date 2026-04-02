@@ -4,7 +4,7 @@
 
 ## FASE ATUAL
 
-Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedList → result.json. Frontend com dados reais mas schema desalinhado com o mock do Gabriel — alinhamento pendente.
+Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedList → result.json. Status por região implementado. Frontend em adaptação para o schema real. Faltam UML e documento ABNT.
 
 ## PRAZOS
 
@@ -15,8 +15,7 @@ Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedLis
 
 ## PROGRESSO
 
-1º Bim (06/04): 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 95%
-2º Bim (08/06): 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 20%
+🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 70%
 
 ## ENTREGÁVEIS DO 1º BIMESTRE
 
@@ -49,7 +48,7 @@ Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedLis
 - **27/03** — Gabriel: 10 boletins 2025 processados, CSVs em `data/processed/`. Gabriel: `download_bulletins.py` (download automático de PDFs).
 - **28/03** — Sessão 5: `MonthlyBulletin`, `UrbanRegion`, `RuralDistrict`, `LinkedList` implementados. Reorganização de pastas. Refactor: `WeeklyBulletin` → `MonthlyBulletin`, campo `week` → `month`.
 - **30/03** — Sessão 6: `CSVReader` implementado. `JSONWriter` implementado como classe separada (ADR 012). `getHead()` adicionado em `LinkedList` e `Locality`. Headers dos CSVs corrigidos (`week` → `month`). Gabriel: estrutura de rotas do Next.js, fix do parser, dashboard avançado.
-- **01/04** — Sessão 7: `main.cpp` implementado. `SituationalAnalysis` implementada (maior risco + taxa de crescimento). `JSONWriter` atualizado com novos campos. Pipeline end-to-end validado. Issues de inconsistência no parser abertas (#38, #39, #40, #41). Limpeza do repo (docs obsoletos, run_dev.sh, README frontend reescrito).
+- **01/04** — Sessão 7: `main.cpp` implementado. `SituationalAnalysis` implementada (maior risco, taxa de crescimento, status por região). Fator rural ajustado de 1.5 → 1.25. `JSONWriter` atualizado com `status` e `growth_rate`. Pipeline end-to-end validado. Issues de inconsistência no parser abertas (#38, #39, #40, #41). Limpeza do repo (docs obsoletos, run_dev.sh, README frontend reescrito). ADRs 013-017 registrados.
 
 ## DECISÕES DE ARQUITETURA (ADRs)
 
@@ -84,7 +83,7 @@ Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedLis
 | Issue | Item | Responsável | Status |
 |-------|------|-------------|--------|
 | — | Refatorações do feedback dos professores | Grupo | ⏳ Aguarda parcial |
-| #7 | `SituationalAnalysis` — análises completas | Guilherme | 🔄 Parcial |
+| #7 | `SituationalAnalysis` — análises completas | Guilherme | ✅ Feito |
 | #19 | Dashboard frontend completo | Gabriel + Alan | 🔄 Em andamento |
 | #18 | Pitch de 5 minutos | Grupo | ⏳ Pendente |
 | — | Interface de saída refinada | Grupo | ⏳ Pendente |
