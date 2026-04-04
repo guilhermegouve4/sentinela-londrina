@@ -1,185 +1,70 @@
-// lib/data.ts - Camada de dados centralizada para o frontend
-// Responsável por carregar, validar e normalizar o result.json
+// lib/data.ts
+// Camada de dados — carrega result.json e calcula summary
 
-import { ResultData, DataState } from '../types/result';
+import { ResultData, Summary, Region, Bulletin } from '../types/result';
 
-// Cache para evitar múltiplas leituras do arquivo
-let dataCache: ResultData | null = null;
-let cacheTimestamp: number = 0;
-const CACHE_DURATION = 30000; // 30 segundos
+let cache: ResultData | null = null;
+let cacheTime = 0;
+const CACHE_MS = 30000;
 
-/**
- * Carrega os dados do result.json com cache e tratamento de erros
- */
-export async function loadResultData(): Promise<DataState> {
+export async function loadResultData(): Promise<{ data: ResultData; summary: Summary } | { error: string }> {
   try {
-    // Verifica se temos dados em cache válidos
     const now = Date.now();
-    if (dataCache && (now - cacheTimestamp) < CACHE_DURATION) {
-      return {
-        data: dataCache,
-        state: 'success',
-        error: null
-      };
+    if (cache && now - cacheTime < CACHE_MS) {
+      return { data: cache, summary: calcSummary(cache) };
     }
 
-    // Carrega o arquivo JSON
-    const response = await fetch('/result.json');
+    const res = await fetch('/result.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    const raw = await res.json() as ResultData;
+
+    if (!raw.regions || !Array.isArray(raw.regions)) {
+      throw new Error('result.json inválido: campo regions ausente');
     }
 
-    const rawData = await response.json();
-
-    // Valida e normaliza os dados
-    const validatedData = validateAndNormalizeData(rawData);
-
-    // Atualiza o cache
-    dataCache = validatedData;
-    cacheTimestamp = now;
-
-    return {
-      data: validatedData,
-      state: 'success',
-      error: null
-    };
-
-  } catch (error) {
-    console.error('Erro ao carregar dados:', error);
-
-    return {
-      data: null,
-      state: 'error',
-      error: error instanceof Error ? error.message : 'Erro desconhecido ao carregar dados'
-    };
+    cache = raw;
+    cacheTime = now;
+    return { data: raw, summary: calcSummary(raw) };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erro desconhecido' };
   }
 }
 
-// Tipo para dados brutos do JSON
-type RawResultData = Record<string, unknown>;
+// Calcula summary a partir do boletim mais recente de cada região
+export function calcSummary(data: ResultData): Summary {
+  const regions = data.regions;
+  const latest = (r: Region): Bulletin => r.bulletins[0];
 
-/**
- * Valida e normaliza os dados do JSON
- */
-function validateAndNormalizeData(rawData: unknown): ResultData {
-  // Validações básicas
-  if (!rawData || typeof rawData !== 'object') {
-    throw new Error('Dados inválidos: esperado objeto JSON');
-  }
-
-  const data = rawData as RawResultData;
-
-  if (!data.meta || !data.summary || !data.regions) {
-    throw new Error('Schema incompleto: faltam campos obrigatórios (meta, summary, regions)');
-  }
-
-  // Normalizações específicas
-  const normalizedData: ResultData = {
-    ...data,
-    // Garante que arrays existam mesmo se vazios
-    regions: Array.isArray(data.regions) ? data.regions : [],
-    monthly_series: Array.isArray(data.monthly_series) ? data.monthly_series : [],
-    alerts: Array.isArray(data.alerts) ? data.alerts : [],
-    ubs_hierarchy: Array.isArray(data.ubs_hierarchy) ? data.ubs_hierarchy : [],
-    status_history: Array.isArray(data.status_history) ? data.status_history : [],
-  } as ResultData;
-
-  return normalizedData;
+  return {
+    total_notified:      regions.reduce((s, r) => s + latest(r).notified, 0),
+    total_confirmed:     regions.reduce((s, r) => s + latest(r).confirmed, 0),
+    total_discarded:     regions.reduce((s, r) => s + latest(r).discarded, 0),
+    total_under_analysis:regions.reduce((s, r) => s + latest(r).underAnalysis, 0),
+    total_deaths:        regions.reduce((s, r) => s + latest(r).deaths, 0),
+    total_dengue_alarm:  regions.reduce((s, r) => s + latest(r).dengueAlarmCases, 0),
+    total_dengue_severe: regions.reduce((s, r) => s + latest(r).dengueSevereCases, 0),
+    critical_regions:    regions.filter(r => r.status === 'critical').length,
+    alert_regions:       regions.filter(r => r.status === 'alert').length,
+    normal_regions:      regions.filter(r => r.status === 'normal').length,
+    highest_risk_region: data.highest_risk.region,
+    highest_risk_value:  data.highest_risk.risk,
+  };
 }
 
-/**
- * Hook personalizado para usar os dados (pode ser usado com React Query, SWR, etc.)
- */
-export function useResultData() {
-  return loadResultData();
-}
+// Utilitários de formatação
+export const fmt = {
+  number: (n: number) => n.toLocaleString('pt-BR'),
+  percent: (n: number, dec = 1) => `${n.toFixed(dec)}%`,
+  date: (s: string) => { try { return new Date(s).toLocaleDateString('pt-BR'); } catch { return s; } },
+};
 
-export function getDataValue<T>(
-  data: ResultData | null,
-  path: string,
-  defaultValue: T
-): T {
-  if (!data) return defaultValue;
-
-  const keys = path.split('.');
-  let current: unknown = data;
-
-  for (const key of keys) {
-    if (current && typeof current === 'object' && current !== null && key in current) {
-      current = (current as Record<string, unknown>)[key];
-    } else {
-      return defaultValue;
-    }
-  }
-
-  return (current as T) ?? defaultValue;
-}
-
-/**
- * Formata números para exibição em português brasileiro
- */
-export function formatNumber(num: number): string {
-  return num.toLocaleString('pt-BR');
-}
-
-/**
- * Formata percentual
- */
-export function formatPercent(value: number, decimals: number = 1): string {
-  return `${value.toFixed(decimals)}%`;
-}
-
-/**
- * Formata data para exibição
- */
-export function formatDate(dateString: string): string {
-  try {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  } catch {
-    return dateString;
-  }
-}
-
-/**
- * Formata data e hora para exibição
- */
-export function formatDateTime(dateString: string): string {
-  try {
-    return new Date(dateString).toLocaleString('pt-BR');
-  } catch {
-    return dateString;
-  }
-}
-
-/**
- * Calcula variação percentual entre dois valores
- */
-export function calculateVariation(current: number, previous: number): number {
-  if (previous === 0) return current > 0 ? 100 : 0;
-  return ((current - previous) / previous) * 100;
-}
-
-/**
- * Obtém a cor baseada no status
- */
-export function getStatusColor(status: 'critical' | 'alert' | 'normal'): string {
-  switch (status) {
-    case 'critical': return 'text-red-600';
-    case 'alert': return 'text-yellow-600';
-    case 'normal': return 'text-green-600';
-    default: return 'text-gray-600';
-  }
-}
-
-/**
- * Obtém o estilo de fundo baseado no status
- */
-export function getStatusBgColor(status: 'critical' | 'alert' | 'normal'): string {
-  switch (status) {
-    case 'critical': return 'bg-red-50 border-red-200';
-    case 'alert': return 'bg-yellow-50 border-yellow-200';
-    case 'normal': return 'bg-green-50 border-green-200';
-    default: return 'bg-gray-50 border-gray-200';
-  }
-}
+export const STATUS_LABEL = { critical: 'Crítico', alert: 'Alerta', normal: 'Normal' } as const;
+export const STATUS_COLOR = { critical: 'text-red-600', alert: 'text-yellow-600', normal: 'text-green-600' } as const;
+export const STATUS_BG    = { critical: 'bg-red-50 border-red-200', alert: 'bg-yellow-50 border-yellow-200', normal: 'bg-green-50 border-green-200' } as const;
+export const STATUS_BADGE = {
+  critical: 'bg-red-100 text-red-700 border border-red-200',
+  alert:    'bg-yellow-100 text-yellow-700 border border-yellow-200',
+  normal:   'bg-green-100 text-green-700 border border-green-200',
+} as const;
+export const BAR_COLOR = { critical: 'bg-red-500', alert: 'bg-yellow-500', normal: 'bg-green-500' } as const;

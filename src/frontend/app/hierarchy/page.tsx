@@ -1,148 +1,155 @@
 "use client";
 
-/**
- * Hierarquia de Saúde - Estrutura Organizacional das UBS.
- * 
- * Esta página exibe:
- * - Árvore hierárquica da rede de saúde municipal
- * - Estrutura: Sede → Regiões → Unidades Básicas de Saúde (UBS)
- * - Contagem de casos confirmados por unidade
- * - Status visual de cada nível da hierarquia
- * - Estatísticas de cobertura e sincronização
- * 
- * Dados sincronizados com o Cadastro Nacional de Estabelecimentos de Saúde (CNES).
- */
-
-"use client";
-
 import { useEffect, useState } from "react";
-import { loadResultData } from "../../lib/data";
+import { loadResultData, fmt, STATUS_BADGE } from "../../lib/data";
 import { ResultData } from "../../types/result";
-import { LoadingSpinner } from "../../components/LoadingSpinner";
-import { ErrorMessage } from "../../components/ErrorMessage";
-import { Network, Hospital, MapPin, ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronDown, Building2, MapPin, Activity } from "lucide-react";
 
-interface HierarchyNode {
-  name: string;
-  type: string;
-  confirmed?: number;
-  status?: string;
-  children?: HierarchyNode[];
-}
-
-const NodeIcon = ({ type }: { type: string }) => {
-  switch (type) {
-    case 'sede': return <Network size={18} className="text-blue-600" />;
-    case 'region': return <MapPin size={18} className="text-red-600" />;
-    case 'ubs': return <Hospital size={18} className="text-green-600" />;
-    default: return <ChevronRight size={14} className="text-gray-400" />;
-  }
+// Hierarquia estática baseada na estrutura real das regiões de Londrina
+const HIERARQUIA: Record<string, string[]> = {
+  Norte:   ["UBS Ernani","UBS João Paz","UBS União da Vitória","UBS Vivi Xavier","UBS Warta"],
+  Sul:     ["UBS Cafezal","UBS Cinco Conjuntos","UBS Jardim do Sol","UBS Leonor","UBS Portal do Sol"],
+  Leste:   ["UBS Bandeirantes","UBS Heimtal","UBS Maravilha","UBS Santiago","UBS São Luiz"],
+  Oeste:   ["UBS Antares","UBS Aquiles","UBS Cláudia","UBS Hermann","UBS Panorama"],
+  Central: ["UBS Centro","UBS Boa Vista","UBS Piza","UBS Shangri-lá"],
+  Rural:   ["UBS Dist. Lerroville","UBS Dist. Maravilha","UBS Dist. Warta"],
 };
 
-const TreeNode = ({ node, depth = 0 }: { node: HierarchyNode, depth?: number }) => {
-  const [isOpen, setIsOpen] = useState(depth < 2);
-  const hasChildren = node.children && node.children.length > 0;
-
-  return (
-    <div className="ml-4">
-      <div 
-        className={`flex items-center gap-3 p-3 rounded-lg transition-colors cursor-pointer hover:bg-gray-50 ${depth === 0 ? 'bg-gray-50 font-bold' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {hasChildren ? (
-          isOpen ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />
-        ) : <div className="w-4" />}
-        
-        <NodeIcon type={node.type} />
-        
-        <div className="flex-1 flex items-center justify-between">
-          <div>
-            <span className="text-sm text-gray-900">{node.name}</span>
-            <span className="ml-2 text-[10px] uppercase font-bold text-gray-400 tracking-widest">{node.type}</span>
-          </div>
-          {node.confirmed !== undefined && (
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-semibold text-gray-700">{node.confirmed} casos</span>
-              {node.status && (
-                <span className={`w-2 h-2 rounded-full ${node.status === 'critical' ? 'bg-red-500' : 'bg-green-500'}`} />
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {hasChildren && isOpen && (
-        <div className="mt-1 border-l border-gray-100 ml-2">
-          {node.children?.map((child, idx) => (
-            <TreeNode key={idx} node={child} depth={depth + 1} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default function HierarquiaUBS() {
-  const [data, setData] = useState<ResultData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function Hierarquia() {
+  const [data, setData]       = useState<ResultData | null>(null);
+  const [error, setError]     = useState<string | null>(null);
+  const [abertos, setAbertos] = useState<Set<string>>(new Set(["Norte"]));
+  const [selecionada, setSelecionada] = useState<string | null>(null);
 
   useEffect(() => {
-    loadResultData().then(result => {
-      if (result.state === 'success') {
-        setData(result.data);
-      } else {
-        setError(result.error || 'Erro desconhecido');
-      }
-      setLoading(false);
+    loadResultData().then(r => {
+      if ("error" in r) setError(r.error);
+      else setData(r.data);
     });
   }, []);
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
-  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+  if (error) return <div className="p-8 text-red-600">{error}</div>;
+  if (!data)  return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
-  const { ubs_hierarchy } = data;
+  const toggle = (nome: string) => {
+    setAbertos(prev => {
+      const next = new Set(prev);
+      if (next.has(nome)) next.delete(nome); else next.add(nome);
+      return next;
+    });
+  };
+
+  const regiaoSelecionada = selecionada
+    ? data.regions.find(r => r.name === selecionada)
+    : null;
 
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Hierarquia de Saúde</h1>
-        <p className="text-sm text-gray-500 mt-1">Estrutura organizacional das unidades de saúde e abrangência</p>
+        <h1 className="text-2xl font-semibold text-gray-900">Hierarquia UBS</h1>
+        <p className="text-sm text-gray-500 mt-1">Estrutura organizacional das Unidades Básicas de Saúde por região</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <div className="mb-6 flex items-center gap-4 text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-4">
-          <span>Estrutura de Rede</span>
-          <div className="flex items-center gap-4 ml-auto">
-            <div className="flex items-center gap-1"><div className="w-3 h-3 bg-blue-100 rounded" /> Sede</div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 bg-red-100 rounded" /> Regional</div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 bg-green-100 rounded" /> UBS</div>
+      <div className="flex gap-6">
+        {/* Árvore */}
+        <div className="w-72 flex-shrink-0">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Secretaria Municipal de Saúde</p>
+            </div>
+            <div className="p-2">
+              {[...data.regions].sort((a, b) => b.risk - a.risk).map(r => {
+                const ubs = HIERARQUIA[r.name] || [];
+                const open = abertos.has(r.name);
+                return (
+                  <div key={r.name}>
+                    <button
+                      onClick={() => { toggle(r.name); setSelecionada(r.name); }}
+                      className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-left transition-colors ${
+                        selecionada === r.name ? "bg-red-50 text-red-700" : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      {open ? <ChevronDown size={14} className="flex-shrink-0" /> : <ChevronRight size={14} className="flex-shrink-0" />}
+                      <MapPin size={14} className="flex-shrink-0" />
+                      <span className="font-medium flex-1">{r.name}</span>
+                      <span className={`text-xs px-1.5 py-0.5 rounded ${STATUS_BADGE[r.status]}`}>
+                        {{ critical: "Crítico", alert: "Alerta", normal: "Normal" }[r.status]}
+                      </span>
+                    </button>
+                    {open && (
+                      <div className="ml-6 mb-1">
+                        {ubs.map(u => (
+                          <div key={u} className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700">
+                            <Building2 size={12} className="flex-shrink-0" />
+                            {u}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-        
-        <div className="space-y-2">
-          {ubs_hierarchy.map((root, idx) => (
-            <TreeNode key={idx} node={root} />
-          ))}
-        </div>
-      </div>
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
-          <h3 className="text-sm font-bold text-gray-700 mb-2">Total de Unidades</h3>
-          <p className="text-2xl font-semibold text-gray-900">54 UBS</p>
-          <p className="text-xs text-gray-500 mt-1">Distribuídas em 6 regiões</p>
-        </div>
-        <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
-          <h3 className="text-sm font-bold text-gray-700 mb-2">Abrangência</h3>
-          <p className="text-2xl font-semibold text-gray-900">100%</p>
-          <p className="text-xs text-gray-500 mt-1">Cobertura total do município</p>
-        </div>
-        <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
-          <h3 className="text-sm font-bold text-gray-700 mb-2">Sincronização</h3>
-          <p className="text-2xl font-semibold text-gray-900">Ativa</p>
-          <p className="text-xs text-gray-500 mt-1">Dados atualizados via CNES</p>
+        {/* Painel de detalhes */}
+        <div className="flex-1">
+          {regiaoSelecionada ? (
+            <div className="space-y-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${{
+                    critical: "bg-red-100", alert: "bg-yellow-100", normal: "bg-green-100"
+                  }[regiaoSelecionada.status]}`}>
+                    <Activity size={20} className={`${{ critical: "text-red-600", alert: "text-yellow-600", normal: "text-green-600" }[regiaoSelecionada.status]}`} />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">Região {regiaoSelecionada.name}</h2>
+                    <p className="text-sm text-gray-500">{regiaoSelecionada.type === "urban" ? "Área Urbana" : "Área Rural"}</p>
+                  </div>
+                  <span className={`ml-auto text-sm font-medium px-3 py-1 rounded-lg ${STATUS_BADGE[regiaoSelecionada.status]}`}>
+                    {{ critical: "Crítico", alert: "Alerta", normal: "Normal" }[regiaoSelecionada.status]}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { label: "Índice de Risco",  value: fmt.percent(regiaoSelecionada.risk) },
+                    { label: "Taxa de Crescimento", value: `${regiaoSelecionada.growth_rate.toFixed(2)}×` },
+                    { label: "UBS vinculadas",   value: `${(HIERARQUIA[regiaoSelecionada.name] || []).length}` },
+                    { label: "Notificados",      value: fmt.number(regiaoSelecionada.bulletins[0].notified) },
+                    { label: "Confirmados",      value: fmt.number(regiaoSelecionada.bulletins[0].confirmed) },
+                    { label: "Óbitos",           value: `${regiaoSelecionada.bulletins[0].deaths}` },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-xs text-gray-500 mb-1">{label}</p>
+                      <p className="text-lg font-semibold text-gray-900">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* UBS da região */}
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100">
+                  <h3 className="text-sm font-medium text-gray-700">Unidades Básicas de Saúde — {regiaoSelecionada.name}</h3>
+                </div>
+                <div className="divide-y divide-gray-50">
+                  {(HIERARQUIA[regiaoSelecionada.name] || []).map(ubs => (
+                    <div key={ubs} className="flex items-center gap-3 px-6 py-3 hover:bg-gray-50">
+                      <Building2 size={16} className="text-gray-400 flex-shrink-0" />
+                      <span className="text-sm text-gray-700">{ubs}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
+              <MapPin size={32} className="text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">Selecione uma região na árvore para ver os detalhes</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,134 +1,162 @@
 "use client";
 
-/**
- * Ingestão de Dados - Upload e Processamento de Boletins.
- * 
- * Esta página permite:
- * - Upload de arquivos PDF de boletins epidemiológicos
- * - Processamento automático via parser Python
- * - Visualização do pipeline de dados (extração → normalização → cálculo)
- * - Status em tempo real do processamento
- * - Requisitos e limitações do sistema
- * 
- * Integra o frontend com o backend Python para extração de dados.
- */
+import { useState } from "react";
+import { Upload, CheckCircle, FileText, AlertTriangle, RefreshCw } from "lucide-react";
 
-"use client";
+type Etapa = "idle" | "reading" | "processing" | "done" | "error";
 
-import { useEffect, useState } from "react";
-import { loadResultData } from "../../lib/data";
-import { ResultData } from "../../types/result";
-import { LoadingSpinner } from "../../components/LoadingSpinner";
-import { ErrorMessage } from "../../components/ErrorMessage";
-import { Upload, FileText, CheckCircle, AlertCircle, RefreshCw, Database } from "lucide-react";
+interface LogLine { tipo: "info" | "ok" | "err"; msg: string; }
 
-export default function IngestaoDados() {
-  const [data, setData] = useState<ResultData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
+export default function Ingestao() {
+  const [etapa, setEtapa]     = useState<Etapa>("idle");
+  const [arquivo, setArquivo] = useState<File | null>(null);
+  const [log, setLog]         = useState<LogLine[]>([]);
+  const [drag, setDrag]       = useState(false);
 
-  useEffect(() => {
-    loadResultData().then(result => {
-      if (result.state === 'success') {
-        setData(result.data);
-      } else {
-        setError(result.error || 'Erro desconhecido');
-      }
-      setLoading(false);
-    });
-  }, []);
+  const addLog = (tipo: LogLine["tipo"], msg: string) =>
+    setLog(prev => [...prev, { tipo, msg }]);
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
-  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+  const simularProcessamento = async (file: File) => {
+    setEtapa("reading");
+    setLog([]);
+    addLog("info", `Arquivo recebido: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
+    await new Promise(r => setTimeout(r, 800));
+    addLog("info", "Validando formato CSV...");
+    await new Promise(r => setTimeout(r, 600));
 
-  // Função para simular o processo de upload
-  const handleUpload = () => {
-    setIsUploading(true);
-    setTimeout(() => {
-      setIsUploading(false);
-      setUploadStatus("success");
-    }, 2000);
+    // Lê o arquivo para validar de verdade
+    const text = await file.text();
+    const linhas = text.trim().split("\n");
+    const header = linhas[0];
+
+    if (!header.includes("region") || !header.includes("confirmed")) {
+      addLog("err", "Formato inválido — o CSV não segue o contrato esperado.");
+      setEtapa("error");
+      return;
+    }
+
+    addLog("ok",   `Header válido: ${linhas.length - 1} registros encontrados`);
+    setEtapa("processing");
+    await new Promise(r => setTimeout(r, 700));
+    addLog("info", "Verificando regiões...");
+    await new Promise(r => setTimeout(r, 500));
+
+    const regioes = new Set(linhas.slice(1).filter(Boolean).map(l => l.split(",")[0]));
+    regioes.forEach(r => addLog("ok", `Região "${r}" identificada`));
+    await new Promise(r => setTimeout(r, 400));
+    addLog("ok",   "CSV validado com sucesso");
+    addLog("info", "Para processar: mova o arquivo para data/processed/ e rode o backend C++");
+    setEtapa("done");
+  };
+
+  const onFile = (file: File) => {
+    if (!file.name.endsWith(".csv")) {
+      addLog("err", "Apenas arquivos .csv são aceitos");
+      return;
+    }
+    setArquivo(file);
+    simularProcessamento(file);
+  };
+
+  const ETAPA_COR: Record<Etapa, string> = {
+    idle:       "bg-gray-50 border-gray-200",
+    reading:    "bg-blue-50 border-blue-200",
+    processing: "bg-yellow-50 border-yellow-200",
+    done:       "bg-green-50 border-green-200",
+    error:      "bg-red-50 border-red-200",
   };
 
   return (
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-gray-900">Ingestão de Dados</h1>
-        <p className="text-sm text-gray-500 mt-1">Upload de boletins epidemiológicos e processamento via Parser Python</p>
+        <p className="text-sm text-gray-500 mt-1">Valide e processe novos boletins em formato CSV</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Área de Upload */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-12 flex flex-col items-center justify-center text-center hover:border-red-500/50 transition-all group cursor-pointer">
-            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Upload size={32} className="text-red-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Arraste o boletim PDF aqui</h3>
-            <p className="text-sm text-gray-500 mt-2 max-w-xs mx-auto">
-              Selecione o arquivo PDF oficial da prefeitura para extração automática de dados.
-            </p>
-            <button 
-              onClick={handleUpload}
-              disabled={isUploading}
-              className="mt-6 px-6 py-2.5 bg-red-600 text-white rounded-lg font-semibold text-sm hover:bg-red-700 transition-colors flex items-center gap-2 disabled:opacity-50"
-            >
-              {isUploading ? <RefreshCw size={18} className="animate-spin" /> : <FileText size={18} />}
-              {isUploading ? "Processando..." : "Selecionar Arquivo"}
-            </button>
+      <div className="grid grid-cols-2 gap-6">
+        {/* Drop zone */}
+        <div>
+          <div
+            onDragOver={e => { e.preventDefault(); setDrag(true); }}
+            onDragLeave={() => setDrag(false)}
+            onDrop={e => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files[0]; if (f) onFile(f); }}
+            className={`rounded-xl border-2 border-dashed p-12 text-center transition-colors cursor-pointer ${
+              drag ? "border-red-400 bg-red-50" : "border-gray-200 hover:border-red-300 hover:bg-red-50"
+            }`}
+            onClick={() => document.getElementById("file-input")?.click()}
+          >
+            <Upload size={36} className="text-gray-400 mx-auto mb-4" />
+            <p className="font-medium text-gray-700 mb-1">Arraste um CSV aqui</p>
+            <p className="text-sm text-gray-500">ou clique para selecionar</p>
+            <p className="text-xs text-gray-400 mt-3">Formato: contrato-csv.md</p>
+            <input
+              id="file-input"
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f); }}
+            />
           </div>
 
-          {/* Status do Processamento */}
-          {uploadStatus === "success" && (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-top-4">
-              <CheckCircle size={20} className="text-green-600 mt-0.5" />
-              <div>
-                <p className="text-sm font-bold text-green-800">Processamento Concluído!</p>
-                <p className="text-xs text-green-700 mt-1">
-                  O parser Python extraiu 156 novos registros com sucesso. O arquivo <span className="font-mono">result.json</span> foi atualizado.
-                </p>
+          {/* Status */}
+          {etapa !== "idle" && (
+            <div className={`mt-4 rounded-xl border p-4 ${ETAPA_COR[etapa]}`}>
+              <div className="flex items-center gap-2 mb-1">
+                {etapa === "done"  && <CheckCircle size={16} className="text-green-600" />}
+                {etapa === "error" && <AlertTriangle size={16} className="text-red-600" />}
+                {(etapa === "reading" || etapa === "processing") && <RefreshCw size={16} className="text-blue-600 animate-spin" />}
+                <span className="text-sm font-medium text-gray-700">
+                  {{ idle: "", reading: "Lendo arquivo...", processing: "Processando...", done: "Concluído", error: "Erro" }[etapa]}
+                </span>
               </div>
+              {arquivo && <p className="text-xs text-gray-500 flex items-center gap-1"><FileText size={12} />{arquivo.name}</p>}
             </div>
           )}
+
+          {/* Instrução do pipeline */}
+          <div className="mt-4 bg-white rounded-xl border border-gray-200 p-4">
+            <p className="text-xs font-medium text-gray-600 mb-3 uppercase tracking-wide">Pipeline de Ingestão</p>
+            {[
+              { n: "1", txt: "Prefeitura publica boletim PDF" },
+              { n: "2", txt: "download_bulletins.py baixa o PDF" },
+              { n: "3", txt: "ai_scan.py processa com Gemini → CSV" },
+              { n: "4", txt: "Backend C++ lê CSV → result.json" },
+              { n: "5", txt: "Dashboard atualizado automaticamente" },
+            ].map(({ n, txt }) => (
+              <div key={n} className="flex items-center gap-3 py-1.5">
+                <span className="w-5 h-5 rounded-full bg-red-100 text-red-600 text-xs font-bold flex items-center justify-center flex-shrink-0">{n}</span>
+                <span className="text-xs text-gray-600">{txt}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Sidebar de Informações */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Database size={16} className="text-blue-600" />
-              Pipeline de Dados
-            </h3>
-            <div className="space-y-4">
-              <div className="flex gap-3">
-                <div className="w-6 h-6 bg-blue-50 rounded-full flex items-center justify-center text-[10px] font-bold text-blue-600 border border-blue-100">1</div>
-                <p className="text-xs text-gray-600 leading-relaxed">Extração de texto via <span className="font-mono text-blue-700">pdfplumber</span></p>
+        {/* Log */}
+        <div>
+          <div className="bg-gray-900 rounded-xl p-4 h-full min-h-64 font-mono">
+            <p className="text-xs text-gray-500 mb-3">▶ Log de processamento</p>
+            {log.length === 0 ? (
+              <p className="text-xs text-gray-600">Aguardando arquivo...</p>
+            ) : log.map((l, i) => (
+              <div key={i} className="flex items-start gap-2 mb-1">
+                <span className={`text-xs ${l.tipo === "ok" ? "text-green-400" : l.tipo === "err" ? "text-red-400" : "text-blue-400"}`}>
+                  {l.tipo === "ok" ? "✔" : l.tipo === "err" ? "✘" : "→"}
+                </span>
+                <span className={`text-xs ${l.tipo === "ok" ? "text-green-300" : l.tipo === "err" ? "text-red-300" : "text-gray-300"}`}>
+                  {l.msg}
+                </span>
               </div>
-              <div className="flex gap-3">
-                <div className="w-6 h-6 bg-blue-50 rounded-full flex items-center justify-center text-[10px] font-bold text-blue-600 border border-blue-100">2</div>
-                <p className="text-xs text-gray-600 leading-relaxed">Normalização de campos e datas via <span className="font-mono text-blue-700">pandas</span></p>
-              </div>
-              <div className="flex gap-3">
-                <div className="w-6 h-6 bg-blue-50 rounded-full flex items-center justify-center text-[10px] font-bold text-blue-600 border border-blue-100">3</div>
-                <p className="text-xs text-gray-600 leading-relaxed">Cálculo de indicadores no <span className="font-mono text-blue-700">Backend C++</span></p>
-              </div>
-            </div>
+            ))}
           </div>
 
-          <div className="bg-yellow-50 rounded-xl border border-yellow-200 p-6">
-            <h3 className="text-sm font-bold text-yellow-800 uppercase tracking-widest mb-3 flex items-center gap-2">
-              <AlertCircle size={16} />
-              Requisitos
-            </h3>
-            <ul className="text-xs text-yellow-700 space-y-2">
-              <li>• Formato aceito: PDF (Boletim Oficial)</li>
-              <li>• Tamanho máximo: 10MB</li>
-              <li>• Layout: Padrão SESA/Prefeitura</li>
-            </ul>
-          </div>
+          {etapa === "done" && (
+            <button
+              onClick={() => { setEtapa("idle"); setLog([]); setArquivo(null); }}
+              className="mt-3 w-full py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Processar outro arquivo
+            </button>
+          )}
         </div>
       </div>
     </div>

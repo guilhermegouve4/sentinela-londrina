@@ -187,12 +187,16 @@ def distribuir_por_regiao(totais: dict) -> list[dict]:
         Sul tem 21.4% → Sul.notified = 214
         ...
 
-    A última região recebe o restante para evitar erros de arredondamento.
-    Isso garante que a soma das regiões = total municipal.
+    Fix #41: under_analysis NÃO é distribuído por percentual.
+    É calculado como restante: notified - confirmed - discarded
+    Isso garante que a soma sempre fecha: confirmed + discarded + under_analysis = notified
+
+    A última região dos demais campos recebe o restante para evitar
+    erros de arredondamento acumulado.
     """
-    # Campos numéricos que serão distribuídos proporcionalmente
-    campos_numericos = [
-        "notified", "confirmed", "discarded", "under_analysis",
+    # Campos distribuídos proporcionalmente (under_analysis é tratado separado)
+    campos_proporcionais = [
+        "notified", "confirmed", "discarded",
         "dengue_cases", "dengue_alarm_cases", "dengue_severe_cases",
         "zika_cases", "chikungunya_cases", "deaths",
     ]
@@ -207,18 +211,20 @@ def distribuir_por_regiao(totais: dict) -> list[dict]:
             "month": totais["month"],
         }
 
-        for campo in campos_numericos:
+        for campo in campos_proporcionais:
             total = totais.get(campo, 0)
 
             if i < len(REGIOES) - 1:
                 # Distribui proporcionalmente
                 linha[campo] = round(total * (pct / soma_pct))
             else:
-                # Última região: pega o restante para fechar o total
-                ja_distribuido = sum(
-                    linhas[j][campo] for j in range(len(linhas))
-                )
+                # Última região: pega o restante para fechar o total exato
+                ja_distribuido = sum(linhas[j][campo] for j in range(len(linhas)))
                 linha[campo] = max(0, total - ja_distribuido)
+
+        # Fix #41: under_analysis = notified - confirmed - discarded
+        # Garante que confirmed + discarded + under_analysis = notified sempre
+        linha["under_analysis"] = max(0, linha["notified"] - linha["confirmed"] - linha["discarded"])
 
         linhas.append(linha)
 
@@ -236,6 +242,26 @@ def salvar_csv(linhas: list[dict], caminho_saida: Path) -> None:
         writer.writeheader()
         writer.writerows(linhas)
     print(f"  ✔ CSV salvo: {caminho_saida} ({len(linhas)} linhas)")
+
+
+def _extrair_mes_do_nome(stem: str) -> str | None:
+    """
+    Fix #40: extrai o mês do nome do arquivo para garantir month correto.
+    Suporta formatos:
+      - "2025-03"         → "03/2025"
+      - "boletim_03_2025" → "03/2025"  (formato antigo)
+    O nome do arquivo é mais confiável que o Gemini para esse campo.
+    """
+    import re
+    # Formato novo: YYYY-MM
+    m = re.match(r"(\d{4})-(\d{2})", stem)
+    if m:
+        return f"{m.group(2)}/{m.group(1)}"
+    # Formato antigo: boletim_NN_YYYY
+    m = re.search(r"_(\d{2})_(\d{4})", stem)
+    if m:
+        return f"{m.group(1)}/{m.group(2)}"
+    return None
 
 
 def processar_pdf(caminho_pdf: Path) -> None:
@@ -271,6 +297,11 @@ def processar_pdf(caminho_pdf: Path) -> None:
         return
 
     totais = validar_totais(totais)
+
+    # Fix #40: month derivado do nome do arquivo — mais confiável que o Gemini
+    mes_do_arquivo = _extrair_mes_do_nome(caminho_pdf.stem)
+    if mes_do_arquivo:
+        totais["month"] = mes_do_arquivo
 
     print(f"  → Totais municipais extraídos:")
     print(f"     Mês:      {totais['month']}")
