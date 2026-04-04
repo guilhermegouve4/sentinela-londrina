@@ -1,7 +1,7 @@
 region,type,month,notified,confirmed,discarded,under_analysis,dengue_cases,dengue_alarm_cases,dengue_severe_cases,zika_cases,chikungunya_cases,deaths
-Norte,urban,01/2025,2734,384,1516,835,384,0,0,0,0,0
-Sul,urban,01/2025,1582,222,877,483,222,0,0,0,0,0
-Leste,urban,01/2025,968,136,537,296,136,0,0,0,0,0
-Oeste,urban,01/2025,968,136,537,296,136,0,0,0,0,0
-Central,urban,01/2025,1086,153,602,332,153,0,0,0,0,0
-Rural,rural,01/2025,858,120,474,260,120,0,0,0,1,0
+Norte,urban,03/2025,2734,384,1516,834,384,0,0,0,0,0
+Sul,urban,03/2025,1582,222,877,483,222,0,0,0,0,0
+Leste,urban,03/2025,968,136,537,295,136,0,0,0,0,0
+Oeste,urban,03/2025,968,136,537,295,136,0,0,0,0,0
+Central,urban,03/2025,1086,153,602,331,153,0,0,0,0,0
+Rural,rural,03/2025,858,120,474,264,120,0,0,0,1,0
