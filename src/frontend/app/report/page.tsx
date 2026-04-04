@@ -1,249 +1,142 @@
 "use client";
 
-/**
- * Relatório Situacional - Documento Oficial Consolidado.
- * 
- * Esta página gera um relatório completo contendo:
- * - Resumo executivo com métricas principais
- * - Análise detalhada por região administrativa
- * - Recomendações técnicas baseadas nos dados
- * - Opções de exportação (impressão, PDF)
- * - Formatação profissional para distribuição
- * 
- * Documento oficial para tomada de decisões e comunicação institucional.
- */
+import { useEffect, useState } from "react";
+import { loadResultData, fmt, STATUS_BADGE, STATUS_BG } from "../../lib/data";
+import { ResultData, Summary } from "../../types/result";
+import { AlertTriangle, TrendingUp, Skull, Activity } from "lucide-react";
 
-"use client";
-
-import { useEffect, useState, useRef } from "react";
-import { loadResultData } from "../../lib/data";
-import { ResultData } from "../../types/result";
-import { LoadingSpinner } from "../../components/LoadingSpinner";
-import { ErrorMessage } from "../../components/ErrorMessage";
-import { ClipboardList, FileText, Printer, Share2, CheckCircle, AlertTriangle, MapPin, Download } from "lucide-react";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-
-export default function RelatorioSituacional() {
-  const [data, setData] = useState<ResultData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [exportingPDF, setExportingPDF] = useState(false);
-  const reportRef = useRef<HTMLDivElement>(null);
+export default function Relatorio() {
+  const [data, setData]       = useState<ResultData | null>(null);
+  const [summary, setSummary] = useState<Summary | null>(null);
+  const [error, setError]     = useState<string | null>(null);
 
   useEffect(() => {
-    loadResultData().then(result => {
-      if (result.state === 'success') {
-        setData(result.data);
-      } else {
-        setError(result.error || 'Erro desconhecido');
-      }
-      setLoading(false);
+    loadResultData().then(r => {
+      if ("error" in r) setError(r.error);
+      else { setData(r.data); setSummary(r.summary); }
     });
   }, []);
 
-  const generatePDF = async () => {
-    if (!reportRef.current || !data) return;
+  if (error) return <div className="p-8 text-red-600">{error}</div>;
+  if (!data || !summary) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
-    setExportingPDF(true);
-    try {
-      const canvas = await html2canvas(reportRef.current, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        width: reportRef.current.scrollWidth,
-        height: reportRef.current.scrollHeight,
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 295; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-
-      let position = 0;
-
-      // Add first page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      // Add additional pages if needed
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      // Add metadata
-      pdf.setProperties({
-        title: `Relatório Epidemiológico - ${data.meta.municipality}`,
-        subject: 'Boletim Epidemiológico',
-        author: 'Sistema Sentinela Londrina',
-        keywords: 'epidemiologia, dengue, vigilância sanitária',
-        creator: 'Sistema Sentinela Londrina'
-      });
-
-      pdf.save(`relatorio-epidemiologico-${data.meta.municipality.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`);
-    } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
-      alert('Erro ao gerar PDF. Tente novamente.');
-    } finally {
-      setExportingPDF(false);
-    }
-  };
-
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
-  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
-
-  const { summary, regions, meta } = data;
+  const regioesPorRisco = [...data.regions].sort((a, b) => b.risk - a.risk);
+  const maisRecente = data.regions[0].bulletins[0].month;
 
   return (
-    <div ref={reportRef} className="p-8 max-w-5xl mx-auto">
-      {/* Header do Relatório */}
-      <div className="mb-10 flex items-center justify-between border-b border-gray-200 pb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-red-200">
-            <ClipboardList size={32} />
-          </div>
+    <div className="p-8">
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold text-gray-900">Relatório Situacional</h1>
+        <p className="text-sm text-gray-500 mt-1">Análise epidemiológica — boletim de {maisRecente}</p>
+      </div>
+
+      {/* Alerta crítico se houver */}
+      {summary.critical_regions > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-5 mb-6 flex items-start gap-3">
+          <AlertTriangle size={20} className="text-red-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Relatório Situacional</h1>
-            <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
-              <MapPin size={14} /> {meta.municipality} — Boletim Epidemiológico Atualizado
+            <p className="font-medium text-red-800">
+              {summary.critical_regions} região{summary.critical_regions > 1 ? "ões" : ""} em situação crítica
+            </p>
+            <p className="text-sm text-red-600 mt-1">
+              {regioesPorRisco.filter(r => r.status === "critical").map(r => r.name).join(", ")} — índice de risco acima de 20%
             </p>
           </div>
         </div>
-        <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
-            <Printer size={16} /> Imprimir
-          </button>
-          <button
-            onClick={generatePDF}
-            disabled={exportingPDF}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-all shadow-md shadow-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {exportingPDF ? <Download size={16} className="animate-spin" /> : <Share2 size={16} />}
-            {exportingPDF ? 'Gerando PDF...' : 'Exportar PDF'}
-          </button>
+      )}
+
+      {/* Métricas principais */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
+        {[
+          { label: "Total Notificados",  value: fmt.number(summary.total_notified),      icon: TrendingUp,   color: "text-blue-600",   bg: "bg-blue-50" },
+          { label: "Casos Confirmados",  value: fmt.number(summary.total_confirmed),      icon: Activity,     color: "text-red-600",    bg: "bg-red-50"  },
+          { label: "Dengue com Alarme",  value: fmt.number(summary.total_dengue_alarm),   icon: AlertTriangle,color: "text-orange-600", bg: "bg-orange-50"},
+          { label: "Óbitos",             value: fmt.number(summary.total_deaths),         icon: Skull,        color: "text-gray-700",   bg: "bg-gray-100"},
+        ].map(({ label, value, icon: Icon, color, bg }) => (
+          <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500 mb-1">{label}</p>
+              <p className={`text-2xl font-semibold ${color}`}>{value}</p>
+            </div>
+            <div className={`w-10 h-10 ${bg} rounded-full flex items-center justify-center`}>
+              <Icon size={20} className={color} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Ranking por risco */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <h2 className="text-sm font-medium text-gray-700">Ranking de Regiões por Índice de Risco</h2>
+          <p className="text-xs text-gray-500 mt-0.5">Ordenado do maior para o menor risco epidemiológico</p>
+        </div>
+        <div className="divide-y divide-gray-50">
+          {regioesPorRisco.map((r, idx) => {
+            const b = r.bulletins[0];
+            const maxRisk = regioesPorRisco[0].risk;
+            return (
+              <div key={r.name} className={`px-6 py-4 flex items-center gap-4 hover:bg-gray-50 ${STATUS_BG[r.status]} border-l-4`}>
+                <span className="text-lg font-bold text-gray-400 w-6">{idx + 1}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="font-medium text-gray-900">{r.name}</span>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${STATUS_BADGE[r.status]}`}>
+                      {{ critical: "Crítico", alert: "Alerta", normal: "Normal" }[r.status]}
+                    </span>
+                    {r.type === "rural" && <span className="text-xs text-gray-400">Rural (×1.25)</span>}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${{ critical: "bg-red-500", alert: "bg-yellow-500", normal: "bg-green-500" }[r.status]}`}
+                        style={{ width: `${(r.risk / maxRisk) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 w-14 text-right">{fmt.percent(r.risk)}</span>
+                  </div>
+                </div>
+                <div className="text-right min-w-32">
+                  <p className="text-sm text-gray-500">Confirmados</p>
+                  <p className="font-semibold text-gray-900">{fmt.number(b.confirmed)}</p>
+                  <p className="text-xs text-gray-500">Crescimento: {r.growth_rate.toFixed(2)}×</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Conteúdo do Relatório */}
-      <div className="space-y-10">
-        {/* Resumo Executivo */}
-        <section>
-          <h2 className="text-lg font-bold text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <div className="w-2 h-6 bg-red-600 rounded-full" />
-            Resumo Executivo
+      {/* Histórico de todos os boletins da região de maior risco */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <h2 className="text-sm font-medium text-gray-700">
+            Histórico Completo — {regioesPorRisco[0].name} (maior risco)
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-              <p className="text-xs font-bold text-gray-400 uppercase mb-2">Notificações Totais</p>
-              <p className="text-3xl font-bold text-gray-900">{summary.total_notified.toLocaleString('pt-BR')}</p>
-              <p className="text-xs text-gray-500 mt-2">Acumulado no período de {meta.period.month}</p>
-            </div>
-            <div className="p-6 bg-red-50 rounded-2xl border border-red-100">
-              <p className="text-xs font-bold text-red-400 uppercase mb-2">Casos Confirmados</p>
-              <p className="text-3xl font-bold text-red-700">{summary.total_confirmed.toLocaleString('pt-BR')}</p>
-              <p className="text-xs text-red-600 mt-2">Taxa de positividade: <span className="font-bold">{((summary.total_confirmed / summary.total_notified) * 100).toFixed(1)}%</span></p>
-            </div>
-            <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100">
-              <p className="text-xs font-bold text-blue-400 uppercase mb-2">Em Análise</p>
-              <p className="text-3xl font-bold text-blue-700">{summary.total_under_analysis.toLocaleString('pt-BR')}</p>
-              <p className="text-xs text-blue-600 mt-2">Aguardando resultado laboratorial</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Análise por Região */}
-        <section>
-          <h2 className="text-lg font-bold text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <div className="w-2 h-6 bg-red-600 rounded-full" />
-            Análise por Região
-          </h2>
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Região</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Confirmados</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">LIRAa %</th>
-                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {regions.map((reg, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-900">{reg.name}</td>
-                    <td className="px-6 py-4 text-gray-600">{reg.confirmed}</td>
-                    <td className="px-6 py-4 text-gray-600">{reg.risk.toFixed(1)}%</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {reg.status === 'critical' ? (
-                          <AlertTriangle size={16} className="text-red-600" />
-                        ) : (
-                          <CheckCircle size={16} className="text-green-600" />
-                        )}
-                        <span className={`text-xs font-bold uppercase ${reg.status === 'critical' ? 'text-red-600' : 'text-green-600'}`}>
-                          {reg.status === 'critical' ? 'Crítico' : 'Normal'}
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Recomendações */}
-        <section className="bg-gray-900 rounded-3xl p-10 text-white">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10">
-              <FileText size={24} className="text-blue-400" />
-            </div>
-            <h2 className="text-xl font-bold">Recomendações Técnicas</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-blue-400 uppercase tracking-widest">Ações Imediatas</h3>
-              <ul className="space-y-3 text-sm text-gray-400">
-                <li className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-1.5 flex-shrink-0" />
-                  Intensificar o bloqueio de transmissão nas regiões Norte e Sul.
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-1.5 flex-shrink-0" />
-                  Realizar varredura de focos em terrenos baldios e ferros-velhos.
-                </li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest">Vigilância</h3>
-              <ul className="space-y-3 text-sm text-gray-400">
-                <li className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 bg-red-400 rounded-full mt-1.5 flex-shrink-0" />
-                  Monitorar diariamente a entrada de novos casos suspeitos nas UBS.
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 bg-red-400 rounded-full mt-1.5 flex-shrink-0" />
-                  Atualizar o sistema Sentinela a cada novo boletim oficial.
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {/* Footer do Relatório */}
-      <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">
-          Gerado automaticamente pelo Sistema Sentinela Londrina em {new Date().toLocaleDateString('pt-BR')}
-        </p>
+        </div>
+        <table className="w-full">
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-100">
+              {["Mês", "Notificados", "Confirmados", "Descartados", "Em Análise", "Óbitos", "Dengue Alarme", "Dengue Grave"].map(h => (
+                <th key={h} className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-4 py-3">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {regioesPorRisco[0].bulletins.map((b, idx) => (
+              <tr key={b.month} className={`border-b border-gray-50 hover:bg-gray-50 text-sm ${idx === regioesPorRisco[0].bulletins.length - 1 ? "border-b-0" : ""}`}>
+                <td className="px-4 py-3 font-medium text-gray-900">{b.month}</td>
+                <td className="px-4 py-3 text-gray-700">{fmt.number(b.notified)}</td>
+                <td className="px-4 py-3 text-gray-700">{fmt.number(b.confirmed)}</td>
+                <td className="px-4 py-3 text-gray-700">{fmt.number(b.discarded)}</td>
+                <td className="px-4 py-3 text-gray-700">{fmt.number(b.underAnalysis)}</td>
+                <td className="px-4 py-3 text-gray-700">{b.deaths}</td>
+                <td className="px-4 py-3 text-gray-700">{b.dengueAlarmCases}</td>
+                <td className="px-4 py-3 text-gray-700">{b.dengueSevereCases}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
