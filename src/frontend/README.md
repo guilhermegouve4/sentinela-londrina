@@ -36,4 +36,4 @@ Acesse `http://localhost:3000`.
 
 ## Dados
 
-O frontend lê `public/result.json`, gerado pelo backend C++. Enquanto o backend não estiver pronto, o arquivo contém dados mock.
+O frontend lê `public/result.json`, gerado pelo backend C++.

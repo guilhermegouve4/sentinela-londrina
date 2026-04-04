@@ -24,7 +24,7 @@ Backend C++ completo e funcional. Pipeline end-to-end rodando: CSV → LinkedLis
 | #20 | Contrato CSV | Guilherme + Pedro | ✅ Feito |
 | #1  | Classe `Locality` (abstrata, C++) | Guilherme | ✅ Feito |
 | #2  | Classe `Node` (C++) | Guilherme | ✅ Feito |
-| #21 | Pesquisa: fontes de dados e libs PDF | Pedro | ✅ Feito |
+| #21 | Pesquisa: fontes de dados e libs PDF | Gabriel | ✅ Feito |
 | #8  | Parser IA: `ai_scan.py` (PDF → Gemini → CSV) | Pedro + Gabriel | ✅ Feito |
 | #5  | Classe `MonthlyBulletin` (C++) | Guilherme | ✅ Feito |
 | #4  | Herança: `UrbanRegion` / `RuralDistrict` | Guilherme | ✅ Feito |

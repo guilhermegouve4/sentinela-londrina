@@ -1,250 +1,140 @@
 "use client";
 
-/**
- * Evolução Temporal - Análise de Tendências Mensais.
- *
- * Esta página apresenta:
- * - Série histórica mensal de casos confirmados
- * - Comparação com meses anteriores (diferenças positivas/negativas)
- * - Distribuição visual por região em cada mês
- * - Insights sobre picos, tendências e recuperações
- * - Barras de progresso mostrando distribuição regional
- *
- * Ajuda na identificação de padrões sazonais e tendências de crescimento.
- */
-
 import { useEffect, useState } from "react";
-import { loadResultData } from "../../lib/data";
+import { loadResultData, fmt, STATUS_BADGE } from "../../lib/data";
 import { ResultData } from "../../types/result";
-import { LoadingSpinner } from "../../components/LoadingSpinner";
-import { ErrorMessage } from "../../components/ErrorMessage";
-import { TrendingUp, Calendar, ArrowUpRight, ArrowDownRight, BarChart3 } from "lucide-react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+const CORES: Record<string, string> = {
+  Norte: "#E53935", Sul: "#1E88E5", Leste: "#43A047",
+  Oeste: "#FB8C00", Central: "#8E24AA", Rural: "#6D4C41",
+};
 
-export default function EvolucaoTemporal() {
+export default function Evolucao() {
   const [data, setData] = useState<ResultData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [regionFiltro, setRegionFiltro] = useState<string>("todas");
 
   useEffect(() => {
-    loadResultData().then(result => {
-      if (result.state === 'success') {
-        setData(result.data);
-      } else {
-        setError(result.error || 'Erro desconhecido');
-      }
-      setLoading(false);
+    loadResultData().then(r => {
+      if ("error" in r) setError(r.error);
+      else setData(r.data);
     });
   }, []);
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
-  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+  if (error) return <div className="p-8 text-red-600">{error}</div>;
+  if (!data)  return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
-  const { monthly_series } = data;
+  // Monta série temporal: todos os meses únicos ordenados
+  const todosOsMeses = Array.from(new Set(
+    data.regions.flatMap(r => r.bulletins.map(b => b.month))
+  )).sort((a, b) => {
+    const [ma, ya] = a.split("/").map(Number);
+    const [mb, yb] = b.split("/").map(Number);
+    return ya !== yb ? ya - yb : ma - mb;
+  });
 
-  // Dados para o gráfico de linha (casos confirmados ao longo do tempo)
-  const lineChartData = {
-    labels: monthly_series.map(month => month.month),
-    datasets: [
-      {
-        label: 'Casos Confirmados',
-        data: monthly_series.map(month => month.total_confirmed),
-        borderColor: 'rgb(239, 68, 68)',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: 'Notificações',
-        data: monthly_series.map(month => month.total_notified),
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.4,
-        fill: true,
-      },
-    ],
-  };
+  const chartData = todosOsMeses.map(mes => {
+    const ponto: Record<string, string | number> = { mes };
+    data.regions.forEach(r => {
+      const b = r.bulletins.find(b => b.month === mes);
+      ponto[r.name] = b ? b.confirmed : 0;
+    });
+    return ponto;
+  });
 
-  const lineChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: 'Evolução Mensal de Casos - 2026',
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          callback: function(value: any) {
-            return value.toLocaleString('pt-BR');
-          }
-        }
-      }
-    }
-  };
-
-  // Dados para o gráfico de barras (comparação por região no último mês)
-  const lastMonth = monthly_series[monthly_series.length - 1];
-  const barChartData = {
-    labels: lastMonth.by_region.map(region => region.region),
-    datasets: [
-      {
-        label: 'Casos Confirmados',
-        data: lastMonth.by_region.map(region => region.confirmed),
-        backgroundColor: lastMonth.by_region.map(region =>
-          region.status === 'critical' ? 'rgba(239, 68, 68, 0.8)' :
-          region.status === 'alert' ? 'rgba(245, 158, 11, 0.8)' :
-          'rgba(34, 197, 94, 0.8)'
-        ),
-        borderColor: lastMonth.by_region.map(region =>
-          region.status === 'critical' ? 'rgb(239, 68, 68)' :
-          region.status === 'alert' ? 'rgb(245, 158, 11)' :
-          'rgb(34, 197, 94)'
-        ),
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const barChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: `Distribuição por Região - ${lastMonth.month}`,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          callback: function(value: any) {
-            return value.toLocaleString('pt-BR');
-          }
-        }
-      }
-    }
-  };
+  const regioesFiltradas = regionFiltro === "todas"
+    ? data.regions.map(r => r.name)
+    : [regionFiltro];
 
   return (
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-gray-900">Evolução Temporal</h1>
-        <p className="text-sm text-gray-500 mt-1">Análise do crescimento de casos por mês epidemiológico</p>
+        <p className="text-sm text-gray-500 mt-1">Casos confirmados por região ao longo dos meses</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        {/* Gráfico de Linha - Evolução Temporal */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <TrendingUp size={20} className="text-red-600" />
-              Tendência Mensal de Casos
-            </h2>
-            <p className="text-sm text-gray-500 mt-1">Evolução dos casos confirmados e notificações ao longo de 2026</p>
-          </div>
-          <div className="h-80">
-            <Line data={lineChartData} options={lineChartOptions} />
-          </div>
+      {/* Filtro de região */}
+      <div className="flex items-center gap-3 mb-6">
+        <span className="text-sm text-gray-600 font-medium">Região:</span>
+        {["todas", ...data.regions.map(r => r.name)].map(r => (
+          <button
+            key={r}
+            onClick={() => setRegionFiltro(r)}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              regionFiltro === r
+                ? "bg-red-600 text-white"
+                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            {r === "todas" ? "Todas" : r}
+          </button>
+        ))}
+      </div>
+
+      {/* Gráfico */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <h2 className="text-sm font-medium text-gray-700 mb-4">Casos Confirmados por Mês</h2>
+        <ResponsiveContainer width="100%" height={360}>
+          <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis dataKey="mes" tick={{ fontSize: 12, fill: "#6b7280" }} />
+            <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} tickFormatter={v => fmt.number(v as number)} />
+            <Tooltip formatter={(v: unknown) => fmt.number(Number(v))} labelFormatter={(l: unknown) => `Mês: ${l}`} />
+            <Legend />
+            {regioesFiltradas.map(nome => (
+              <Line
+                key={nome}
+                type="monotone"
+                dataKey={nome}
+                stroke={CORES[nome] || "#888"}
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Tabela resumo do boletim mais recente */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <h2 className="text-sm font-medium text-gray-700">Último Boletim por Região</h2>
         </div>
-
-        {/* Gráfico de Barras - Distribuição Regional */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <BarChart3 size={20} className="text-blue-600" />
-              Distribuição Regional
-            </h2>
-            <p className="text-sm text-gray-500 mt-1">Casos confirmados por região no mês mais recente</p>
-          </div>
-          <div className="h-80">
-            <Bar data={barChartData} options={barChartOptions} />
-          </div>
-        </div>
-
-        {/* Estatísticas Mensais Detalhadas */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <Calendar size={16} className="text-green-600" />
-              Estatísticas Mensais Detalhadas
-            </h2>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {monthly_series.map((month, idx) => {
-                const prevMonth = idx > 0 ? monthly_series[idx - 1] : null;
-                const diff = prevMonth ? month.total_confirmed - prevMonth.total_confirmed : 0;
-                const isUp = diff > 0;
-
-                return (
-                  <div key={month.month} className="bg-gray-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={16} className="text-gray-500" />
-                        <span className="text-sm font-medium text-gray-900">{month.month}</span>
-                      </div>
-                      {prevMonth && (
-                        <div className={`flex items-center gap-1 text-xs font-medium ${
-                          isUp ? 'text-red-600' : 'text-green-600'
-                        }`}>
-                          {isUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                          {Math.abs(diff)}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Confirmados:</span>
-                        <span className="font-semibold text-red-600">{month.total_confirmed.toLocaleString('pt-BR')}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Notificações:</span>
-                        <span className="font-semibold text-blue-600">{month.total_notified.toLocaleString('pt-BR')}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Óbitos:</span>
-                        <span className="font-semibold text-gray-900">{month.total_deaths}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <table className="w-full">
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-100">
+              <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-6 py-3">Região</th>
+              <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-6 py-3">Mês</th>
+              <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-6 py-3">Notificados</th>
+              <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-6 py-3">Confirmados</th>
+              <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-6 py-3">Risco</th>
+              <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-6 py-3">Crescimento</th>
+              <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-6 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.regions.map((r, idx) => {
+              const b = r.bulletins[0];
+              return (
+                <tr key={r.name} className={`border-b border-gray-50 hover:bg-gray-50 ${idx === data.regions.length - 1 ? "border-b-0" : ""}`}>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{r.name}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{b.month}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{fmt.number(b.notified)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{fmt.number(b.confirmed)}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{fmt.percent(r.risk)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{r.growth_rate.toFixed(2)}×</td>
+                  <td className="px-6 py-4">
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-md ${STATUS_BADGE[r.status]}`}>
+                      {{ critical: "Crítico", alert: "Alerta", normal: "Normal" }[r.status]}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );

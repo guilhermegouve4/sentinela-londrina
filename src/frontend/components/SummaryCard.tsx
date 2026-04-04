@@ -4,7 +4,7 @@ import React from 'react';
 interface SummaryCardProps {
   title: string;
   value: string | number;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   color: string;
   bgColor: string;
 }

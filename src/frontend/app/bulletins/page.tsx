@@ -1,136 +1,107 @@
 "use client";
 
-/**
- * Boletins Semanais - Acesso aos Documentos Oficiais.
- * 
- * Esta página permite:
- * - Visualizar lista de boletins epidemiológicos publicados
- * - Baixar os arquivos PDF originais da prefeitura
- * - Buscar por número ou data específica
- * - Filtrar por ano epidemiológico
- * 
- * Os dados são extraídos automaticamente do portal da Prefeitura de Londrina.
- */
-
-"use client";
-
 import { useEffect, useState } from "react";
-import { loadResultData } from "../../lib/data";
+import { loadResultData, fmt, STATUS_BADGE } from "../../lib/data";
 import { ResultData } from "../../types/result";
-import { LoadingSpinner } from "../../components/LoadingSpinner";
-import { ErrorMessage } from "../../components/ErrorMessage";
-import { FileText, Download, ExternalLink, Search, Filter } from "lucide-react";
 
-export default function BoletinsSemanais() {
-  const [data, setData] = useState<ResultData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function Boletins() {
+  const [data, setData]             = useState<ResultData | null>(null);
+  const [error, setError]           = useState<string | null>(null);
+  const [filtroRegiao, setFiltroRegiao] = useState("todas");
+  const [filtroStatus, setFiltroStatus] = useState("todos");
 
   useEffect(() => {
-    loadResultData().then(result => {
-      if (result.state === 'success') {
-        setData(result.data);
-      } else {
-        setError(result.error || 'Erro desconhecido');
-      }
-      setLoading(false);
+    loadResultData().then(r => {
+      if ("error" in r) setError(r.error);
+      else setData(r.data);
     });
   }, []);
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
-  if (!data) return <ErrorMessage message="Dados não disponíveis" />;
+  if (error) return <div className="p-8 text-red-600">{error}</div>;
+  if (!data)  return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
-  const { meta } = data;
+  // Gera linhas planas de todos os boletins de todas as regiões
+  const linhas = data.regions.flatMap(r =>
+    r.bulletins.map(b => ({ ...b, region: r.name, status: r.status, risk: r.risk, type: r.type }))
+  ).sort((a, b) => {
+    const [ma, ya] = a.month.split("/").map(Number);
+    const [mb, yb] = b.month.split("/").map(Number);
+    return ya !== yb ? yb - ya : mb - ma;
+  });
 
-  // Simulação de lista de boletins PDF
-  const boletins = [
-    { id: 12, data: "24/03/2026", titulo: "Boletim Epidemiológico nº 12/2026", status: "Publicado" },
-    { id: 11, data: "17/03/2026", titulo: "Boletim Epidemiológico nº 11/2026", status: "Publicado" },
-    { id: 10, data: "10/03/2026", titulo: "Boletim Epidemiológico nº 10/2026", status: "Publicado" },
-    { id: 9,  data: "03/03/2026", titulo: "Boletim Epidemiológico nº 09/2026", status: "Publicado" },
-    { id: 8,  data: "24/02/2026", titulo: "Boletim Epidemiológico nº 08/2026", status: "Publicado" },
-  ];
+  const filtradas = linhas.filter(l => {
+    if (filtroRegiao !== "todas" && l.region !== filtroRegiao) return false;
+    if (filtroStatus !== "todos" && l.status !== filtroStatus) return false;
+    return true;
+  });
 
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Boletins Semanais</h1>
-        <p className="text-sm text-gray-500 mt-1">Acesso aos documentos originais e dados extraídos</p>
+        <h1 className="text-2xl font-semibold text-gray-900">Boletins Mensais</h1>
+        <p className="text-sm text-gray-500 mt-1">{linhas.length} registros de {data.regions.length} regiões</p>
       </div>
 
-      {/* Filtros e Busca */}
-      <div className="flex gap-4 mb-6">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input 
-            type="text" 
-            placeholder="Buscar boletim por número ou data..." 
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-          />
+      {/* Filtros */}
+      <div className="flex items-center gap-6 mb-6 bg-white border border-gray-200 rounded-xl p-4">
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium text-gray-600">Região</label>
+          <select
+            value={filtroRegiao}
+            onChange={e => setFiltroRegiao(e.target.value)}
+            className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 bg-white text-gray-700"
+          >
+            <option value="todas">Todas</option>
+            {data.regions.map(r => <option key={r.name} value={r.name}>{r.name}</option>)}
+          </select>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-          <Filter size={16} />
-          Filtrar Ano
-        </button>
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium text-gray-600">Status</label>
+          <select
+            value={filtroStatus}
+            onChange={e => setFiltroStatus(e.target.value)}
+            className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 bg-white text-gray-700"
+          >
+            <option value="todos">Todos</option>
+            <option value="critical">Crítico</option>
+            <option value="alert">Alerta</option>
+            <option value="normal">Normal</option>
+          </select>
+        </div>
+        <span className="text-sm text-gray-500 ml-auto">{filtradas.length} registros</span>
       </div>
 
-      {/* Lista de Boletins */}
+      {/* Tabela */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full text-left">
+        <table className="w-full">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Documento</th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Data de Publicação</th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Ações</th>
+            <tr className="bg-gray-50 border-b border-gray-100">
+              {["Mês", "Região", "Notificados", "Confirmados", "Descartados", "Em Análise", "Óbitos", "Alarme", "Grave", "Status"].map(h => (
+                <th key={h} className="text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-4 py-3">{h}</th>
+              ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
-            {boletins.map((bol) => (
-              <tr key={bol.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-red-50 rounded flex items-center justify-center">
-                      <FileText size={16} className="text-red-600" />
-                    </div>
-                    <span className="text-sm font-medium text-gray-900">{bol.titulo}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{bol.data}</td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-md border border-green-100">
-                    {bol.status}
+          <tbody>
+            {filtradas.map((l, idx) => (
+              <tr key={`${l.region}-${l.month}`} className={`border-b border-gray-50 hover:bg-gray-50 text-sm ${idx === filtradas.length - 1 ? "border-b-0" : ""}`}>
+                <td className="px-4 py-3 font-medium text-gray-900">{l.month}</td>
+                <td className="px-4 py-3 text-gray-700">{l.region}</td>
+                <td className="px-4 py-3 text-gray-700">{fmt.number(l.notified)}</td>
+                <td className="px-4 py-3 text-gray-700">{fmt.number(l.confirmed)}</td>
+                <td className="px-4 py-3 text-gray-700">{fmt.number(l.discarded)}</td>
+                <td className="px-4 py-3 text-gray-700">{fmt.number(l.underAnalysis)}</td>
+                <td className="px-4 py-3 text-gray-700">{l.deaths}</td>
+                <td className="px-4 py-3 text-gray-700">{l.dengueAlarmCases}</td>
+                <td className="px-4 py-3 text-gray-700">{l.dengueSevereCases}</td>
+                <td className="px-4 py-3">
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded ${STATUS_BADGE[l.status]}`}>
+                    {{ critical: "Crítico", alert: "Alerta", normal: "Normal" }[l.status]}
                   </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex justify-end gap-2">
-                    <button className="p-2 text-gray-400 hover:text-blue-600 transition-colors" title="Visualizar">
-                      <ExternalLink size={18} />
-                    </button>
-                    <button className="p-2 text-gray-400 hover:text-red-600 transition-colors" title="Download PDF">
-                      <Download size={18} />
-                    </button>
-                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Info de Origem */}
-      <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200 flex items-start gap-3">
-        <div className="p-2 bg-white rounded border border-gray-200">
-          <Search size={16} className="text-gray-400" />
-        </div>
-        <div>
-          <p className="text-xs font-bold text-gray-500 uppercase">Fonte de Dados</p>
-          <p className="text-sm text-gray-700">
-            Os dados são extraídos automaticamente do portal da Prefeitura de Londrina. 
-            Última sincronização: <span className="font-semibold">{new Date(meta.generated_at).toLocaleString('pt-BR')}</span>
-          </p>
-        </div>
       </div>
     </div>
   );
