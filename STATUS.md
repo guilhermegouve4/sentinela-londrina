@@ -1,6 +1,6 @@
 # STATUS — AEP Sentinela Londrina
 
-> Última atualização: 03/04/2026 | Entrega: 06/04/2026 (3 dias)
+> Última atualização: 05/04/2026 | Entrega: 06/04/2026 (1 dia)
 
 ## FASE ATUAL
 
@@ -8,7 +8,7 @@ Projeto completo. Pipeline end-to-end funcionando: PDF → Parser Python (Gemini
 
 ## PROGRESSO
 
-🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 90%
+🟩🟩🟩🟩🟩🟩🟩🟩🟩🟨 95%
 
 ## ENTREGÁVEIS
 
@@ -44,6 +44,7 @@ Projeto completo. Pipeline end-to-end funcionando: PDF → Parser Python (Gemini
 - **30/03** — Sessão 6: `CSVReader`, `JSONWriter` implementados. Gabriel: estrutura de rotas do Next.js, fix do parser, primeiras páginas do dashboard.
 - **01/04** — Sessão 7: `main.cpp`, `SituationalAnalysis` implementados. Pipeline end-to-end validado. ADRs 013-017 registrados.
 - **03/04** — Sessão 8: Dashboard completo — 9 páginas implementadas com dados reais do `result.json` (Visão Geral, Evolução, Relatório, Alertas, Boletins, Filtros, Histórico, Hierarquia, Ingestão). Fix issues #40 e #41 no parser. CSVs e `result.json` regenerados.
+- **05/04** — Sessão 9: Verificação end-to-end. Issues #39, #40, #41 confirmadas como resolvidas nos CSVs. Frontend confirmado sem mocks — 8/9 páginas consomem `result.json` real; Ingestão é utilitária. Fix de responsividade mobile e favicon (Gabriel).
 
 ## DECISÕES DE ARQUITETURA (ADRs)
 
