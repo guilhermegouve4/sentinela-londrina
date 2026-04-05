@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinela Londrina - Offline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        h1 {
+            color: #1f2937;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        p {
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .status {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .status-title {
+            color: #92400e;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .status-text {
+            color: #b45309;
+            font-size: 14px;
+        }
+
+        .cached-data {
+            background: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .cached-title {
+            color: #0c4a6e;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .cached-list {
+            color: #0c4a6e;
+            font-size: 14px;
+        }
+
+        .cached-list li {
+            list-style: none;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .cached-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #0284c7;
+            font-weight: bold;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f4f6;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📡</div>
+        <h1>Sem Conexão</h1>
+        <p>Você está offline no momento. Mas não se preocupe, você ainda pode acessar os dados em cache.</p>
+
+        <div class="status">
+            <div class="status-title">Status da Conexão</div>
+            <div class="status-text">
+                <span class="spinner"></span>
+                Aguardando reconexão...
+            </div>
+        </div>
+
+        <div class="cached-data">
+            <div class="cached-title">Dados Disponíveis (Offline)</div>
+            <ul class="cached-list">
+                <li>Dashboard principal</li>
+                <li>Histórico de boletins</li>
+                <li>Gráficos de evolução</li>
+                <li>Alertas salvos</li>
+            </ul>
+        </div>
+
+        <button onclick="retryConnection()">Tentar Novamente</button>
+
+        <div class="footer">
+            <p>Sentinela Londrina v1.0 • Monitoramento de Arboviroses</p>
+        </div>
+    </div>
+
+    <script>
+        // Monitora a reconexão
+        window.addEventListener('online', () => {
+            console.log('[Offline] Reconectado! Recarregando...');
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('[Offline] Conexão perdida');
+        });
+
+        // Função para tentar reconectar
+        function retryConnection() {
+            const button = document.querySelector('button');
+            button.disabled = true;
+            button.textContent = 'Tentando conectar...';
+
+            // Tenta fazer uma requisição simples
+            fetch('/api/health', { method: 'HEAD' })
+                .then(() => {
+                    console.log('[Offline] Reconexão bem-sucedida!');
+                    window.location.reload();
+                })
+                .catch(() => {
+                    button.disabled = false;
+                    button.textContent = 'Tentar Novamente';
+                    alert('Ainda sem conexão. Tente novamente em alguns momentos.');
+                });
+        }
+
+        // Verifica a conexão periodicamente
+        setInterval(() => {
+            if (navigator.onLine) {
+                console.log('[Offline] Conexão restaurada, recarregando...');
+                window.location.reload();
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

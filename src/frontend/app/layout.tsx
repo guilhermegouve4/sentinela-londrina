@@ -23,6 +23,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { PWAInit } from "./pwa-init";
 import "./globals.css";
 // Importação dos ícones do Lucide React para a navegação
 import {
@@ -108,8 +109,19 @@ export default function RootLayout({
       <head>
         <title>Sentinela Londrina</title>
         <meta name="description" content="Sistema de monitoramento de arboviroses em Londrina" />
+        
+        {/* PWA Meta Tags */}
+        <meta name="theme-color" content="#1f2937" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Sentinela Londrina" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
       <body className="bg-gray-50 antialiased">
+        <PWAInit />
         <div className="flex min-h-screen">
           <Sidebar />
 
