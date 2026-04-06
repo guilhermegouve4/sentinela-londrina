@@ -1,33 +1,24 @@
+#include <fstream>
+#include <cmath>
 #include "../include/JSONWriter.h"
 #include "../include/LinkedList.h"
 #include "../include/Node.h"
 #include "../include/Locality.h"
 #include "../include/MonthlyBulletin.h"
 #include "../include/SituationalAnalysis.h"
-#include "../include/Logger.h"
-
-#include <fstream>
-#include <iomanip>
-#include <cmath>
 
 void JSONWriter::write(LinkedList &list, const std::string &outputPath) {
-    LOG_INFO("Iniciando escrita do JSON para " + outputPath);
     SituationalAnalysis sa;
-    HighestRiskRegion hr = sa.highestRisk(list);
+    HighestRiskRegion highest = sa.highestRisk(list);
 
     std::ofstream file(outputPath);
-    if (!file.is_open()) {
-        LOG_ERROR("Não foi possível abrir o arquivo de saída JSON: " + outputPath);
-        return;
-    }
 
     file << "{\n";
 
     file << "  \"highest_risk\": {\n";
-    file << "    \"name\": \"" << hr.name << "\",\n";
-    file << "    \"risk\": " << std::fixed << std::setprecision(2) << hr.risk << "\n";
+    file << "    \"region\": \"" << highest.name << "\",\n";
+    file << "    \"risk\": "     << highest.risk  << "\n";
     file << "  },\n";
-    LOG_INFO("Maior risco calculado: " + hr.name + " com " + std::to_string(hr.risk) + "%");
 
     file << "  \"regions\": [\n";
 
@@ -37,7 +28,7 @@ void JSONWriter::write(LinkedList &list, const std::string &outputPath) {
     while (node != nullptr) {
         Locality *locality = node->data;
 
-        double growthRate = sa.growthRate(list, locality->getName()).growthRate;
+        RegionGrowth growth = sa.growthRate(list, locality->getName());
 
         if (!firstLocality) file << ",\n";
         firstLocality = false;
@@ -45,14 +36,13 @@ void JSONWriter::write(LinkedList &list, const std::string &outputPath) {
         file << "    {\n";
         file << "      \"name\": \""        << locality->getName() << "\",\n";
         file << "      \"type\": \""        << (locality->isUrban() ? "urban" : "rural") << "\",\n";
-        file << "      \"risk\": "          << std::fixed << std::setprecision(2) << locality->calculateRisk() << ",\n";
-        file << "      \"status\": \""       << sa.getStatus(locality->calculateRisk()) << "\",\n";
-        
-        if (std::isnan(growthRate)) {
+        file << "      \"risk\": "          << locality->calculateRisk() << ",\n";
+        file << "      \"status\": \""      << sa.getStatus(locality->calculateRisk()) << "\",\n";
+
+        if (std::isnan(growth.growthRate)) {
             file << "      \"growth_rate\": null,\n";
-            LOG_WARNING("Taxa de crescimento para " + locality->getName() + " é NaN. Exportando como null.");
         } else {
-            file << "      \"growth_rate\": "   << std::fixed << std::setprecision(2) << growthRate << ",\n";
+            file << "      \"growth_rate\": " << growth.growthRate << ",\n";
         }
 
         file << "      \"bulletins\": [\n";
@@ -89,7 +79,4 @@ void JSONWriter::write(LinkedList &list, const std::string &outputPath) {
 
     file << "\n  ]\n";
     file << "}\n";
-
-    file.close();
-    LOG_INFO("Escrita do JSON concluída com sucesso.");
 }

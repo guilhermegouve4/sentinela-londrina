@@ -54,7 +54,4 @@ class MonthlyBulletin {
         int getZikaCases() const;
         int getChikungunyaCases() const;
         int getDeaths() const;
-
-        // Adicionado para permitir testes e atualizações
-        void setNotified(int notified);
 };
