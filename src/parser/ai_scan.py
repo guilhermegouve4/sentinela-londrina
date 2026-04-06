@@ -38,9 +38,10 @@ from google.genai import types
 # CAMINHOS DO PROJETO
 # =============================================================================
 
-BASE_DIR      = Path(__file__).resolve().parent.parent.parent
+BASE_DIR      = Path(__file__ ).resolve().parent.parent.parent
 RAW_DIR       = BASE_DIR / "data" / "raw"
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
+CONFIG_PATH   = BASE_DIR / "src" / "parser" / "config.json"
 
 # =============================================================================
 # CONFIGURAÇÃO DA API
@@ -86,19 +87,31 @@ CAMPOS_CONTRATO = [
 #   4. Atualize os valores abaixo
 # =============================================================================
 
-REGIOES = [
-    # (nome,       type,    percentual_notificados)
-    ("Norte",    "urban",  0.370),
-    ("Sul",      "urban",  0.214),
-    ("Leste",    "urban",  0.131),
-    ("Oeste",    "urban",  0.131),
-    ("Central",  "urban",  0.147),
-    ("Rural",    "rural",  0.116),
-]
+def load_regions_config(config_path: Path) -> list[tuple[str, str, float]]:
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+        regions_data = config.get("REGIOES", [])
+        regions = []
+        for r in regions_data:
+            if all(k in r for k in ["name", "type", "percentage"]):
+                regions.append((r["name"], r["type"], r["percentage"]))
+            else:
+                print(f"ERRO: Configuração de região inválida em {config_path}. Faltando chaves 'name', 'type' ou 'percentage'.")
+                sys.exit(1)
+        return regions
+    except FileNotFoundError:
+        print(f"ERRO: Arquivo de configuração não encontrado: {config_path}")
+        sys.exit(1)
+    except json.JSONDecodeError:
+        print(f"ERRO: Arquivo de configuração JSON inválido: {config_path}")
+        sys.exit(1)
+
+REGIOES = load_regions_config(CONFIG_PATH)
 
 # Verificação: percentuais devem somar ~1.0
 _soma = sum(r[2] for r in REGIOES)
-assert abs(_soma - 1.109) < 0.02, f"Percentuais somam {_soma:.3f}, verifique REGIOES"
+assert abs(_soma - 1.109) < 0.02, f"Percentuais somam {_soma:.3f}, verifique REGIOES em {CONFIG_PATH}"
 
 # =============================================================================
 # O PROMPT
