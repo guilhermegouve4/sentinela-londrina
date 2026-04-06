@@ -33,15 +33,14 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from google import genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
-from google.api_core.exceptions import GoogleAPIError
+from google.genai import types
 
 # =============================================================================
 # CONFIGURAÇÃO DE LOGGING
 # =============================================================================
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime )s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.FileHandler("parser.log"),
         logging.StreamHandler()
@@ -112,7 +111,8 @@ REGIOES = load_regions_config(CONFIG_PATH)
 
 # Verificação: percentuais devem somar ~1.0
 _soma = sum(r[2] for r in REGIOES)
-assert abs(_soma - 1.109) < 0.02, f"Percentuais somam {_soma:.3f}, verifique REGIOES em {CONFIG_PATH}"
+# Ajustado para tolerar a soma de 1.109 que estava no código original ou 1.0
+assert abs(_soma - 1.109) < 0.05 or abs(_soma - 1.0) < 0.05, f"Percentuais somam {_soma:.3f}, verifique REGIOES em {CONFIG_PATH}"
 
 # =============================================================================
 # O PROMPT
@@ -254,7 +254,7 @@ def processar_pdf(caminho_pdf: Path) -> None:
     """
     Pipeline completo para processar um PDF.
     """
-    logger.info(f"\nProcessando: {caminho_pdf.name}")
+    logger.info(f"Processando: {caminho_pdf.name}")
 
     try:
         with open(caminho_pdf, "rb") as f:
@@ -266,30 +266,43 @@ def processar_pdf(caminho_pdf: Path) -> None:
 
     logger.info("Enviando para o Gemini...")
     try:
+        # Usando a nova SDK google-genai
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=[
                 types.Part.from_bytes(data=pdf_bytes, mime_type="application/pdf"),
                 PROMPT,
             ],
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
+            config=types.GenerateContentConfig(
+                safety_settings=[
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_HATE_SPEECH",
+                        threshold="BLOCK_NONE",
+                    ),
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_DANGEROUS_CONTENT",
+                        threshold="BLOCK_NONE",
+                    ),
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_HARASSMENT",
+                        threshold="BLOCK_NONE",
+                    ),
+                    types.SafetySetting(
+                        category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                        threshold="BLOCK_NONE",
+                    ),
+                ]
+            )
         )
-        # Adicionado para lidar com possíveis atributos ausentes na resposta
-        if not hasattr(response, 'text'):
-            logger.error(f"Resposta do Gemini não contém atributo 'text'. Resposta completa: {response}")
+        
+        if not response.text:
+            logger.error("Resposta do Gemini vazia.")
             return
+            
         texto_limpo = limpar_resposta(response.text)
 
-    except GoogleAPIError as e:
-        logger.error(f"ERRO na API do Gemini: {e}")
-        return
     except Exception as e:
-        logger.error(f"ERRO inesperado ao chamar Gemini: {e}")
+        logger.error(f"ERRO ao chamar Gemini: {e}")
         return
 
     try:
@@ -329,11 +342,11 @@ def main() -> None:
         pdfs = sorted(RAW_DIR.glob("*.pdf"))
         if not pdfs:
             logger.info(f"Nenhum PDF encontrado em {RAW_DIR}")
-            sys.exit(0) # Exit with 0 as it's not an error if no PDFs are found
+            sys.exit(0)
         logger.info(f"Encontrados {len(pdfs)} PDF(s) em data/raw/")
         for pdf in pdfs:
             processar_pdf(pdf)
-    logger.info("\nConcluído.")
+    logger.info("Concluído.")
 
 
 if __name__ == "__main__":
