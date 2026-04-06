@@ -17,6 +17,11 @@ void CSVReader::read(LinkedList& list) {
     std::string processed_data_path = "data/processed/";
 
     std::vector<fs::path> csv_files;
+    if (!fs::exists(processed_data_path)) {
+        LOG_WARNING("Diretório de dados processados não encontrado: " + processed_data_path);
+        return;
+    }
+
     for (const auto& entry : fs::directory_iterator(processed_data_path)) {
         if (entry.is_regular_file() && entry.path().extension() == ".csv") {
             csv_files.push_back(entry.path());
@@ -48,8 +53,8 @@ void CSVReader::read(LinkedList& list) {
             std::string segment;
             std::vector<std::string> tokens;
 
-            // Parse line by comma
-            while (std::getline(ss, segment, ",")) {
+            // Parse line by comma - CORREÇÃO: usar ',' (char) em vez de "," (string)
+            while (std::getline(ss, segment, ',')) {
                 tokens.push_back(segment);
             }
 
@@ -59,12 +64,13 @@ void CSVReader::read(LinkedList& list) {
             }
 
             std::string region_name = tokens[0];
-            // The month is derived from the filename stem in the original ai_scan.py, not from tokens[2]
-            // Let's keep the original C++ logic for month extraction from filename stem for now.
-            // For consistency with ai_scan.py, we should ideally pass the month from there or re-extract.
-            // For simplicity, we'll use the month from the filename stem as it was before.
+            
+            // Extração do mês do nome do arquivo (YYYY-MM.csv)
             std::string stem = file_path.stem().string();
-            std::string month = stem.substr(5, 2) + "/" + stem.substr(0, 4);
+            std::string month = "00/0000";
+            if (stem.length() >= 7) {
+                month = stem.substr(5, 2) + "/" + stem.substr(0, 4);
+            }
 
             Locality* locality = list.find(region_name);
             if (locality == nullptr) {
@@ -88,12 +94,8 @@ void CSVReader::read(LinkedList& list) {
                 );
                 locality->addBulletin(bulletin);
                 LOG_DEBUG("Boletim adicionado para " + region_name + " em " + month + " do arquivo " + file_path.string());
-            } catch (const std::invalid_argument& e) {
-                LOG_ERROR("Erro de conversão numérica no arquivo " + file_path.string() + ", linha: \"" + line + "\". Erro: " + e.what());
-            } catch (const std::out_of_range& e) {
-                LOG_ERROR("Valor numérico fora do intervalo no arquivo " + file_path.string() + ", linha: \"" + line + "\". Erro: " + e.what());
             } catch (const std::exception& e) {
-                LOG_ERROR("Erro inesperado ao processar linha no arquivo " + file_path.string() + ", linha: \"" + line + "\". Erro: " + e.what());
+                LOG_ERROR("Erro ao processar linha no arquivo " + file_path.string() + ", linha: \"" + line + "\". Erro: " + e.what());
             }
         }
         file.close();
