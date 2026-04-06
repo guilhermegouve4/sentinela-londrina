@@ -11,3 +11,5 @@ int MonthlyBulletin::getDengueSevereCases() const { return m_dengueSevereCases; 
 int MonthlyBulletin::getZikaCases() const { return m_zikaCases; }
 int MonthlyBulletin::getChikungunyaCases() const { return m_chikungunyaCases; }
 int MonthlyBulletin::getDeaths() const { return m_deaths; }
+
+void MonthlyBulletin::setNotified(int notified) { m_notified = notified; }
