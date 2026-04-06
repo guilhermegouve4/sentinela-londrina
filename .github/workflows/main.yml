@@ -10,8 +10,9 @@ on:
   workflow_dispatch: # Permite executar o workflow manualmente
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   PYTHON_VERSION: "3.11"
-  NODE_VERSION: "20.x"
+  NODE_VERSION: "24.x"
 
 jobs:
   build-and-process:
@@ -106,6 +107,3 @@ jobs:
 
     - name: Deploy to Vercel (Example)
       run: echo "Simulando deploy do frontend..."
-
-
-  #TESTE VALIDAÇÃO
