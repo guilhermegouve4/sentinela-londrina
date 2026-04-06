@@ -28,17 +28,32 @@ import os
 import json
 import csv
 import sys
+import logging
 from pathlib import Path
 
 from dotenv import load_dotenv
 from google import genai
-from google.genai import types
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from google.api_core.exceptions import GoogleAPIError
+
+# =============================================================================
+# CONFIGURAÇÃO DE LOGGING
+# =============================================================================
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime )s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("parser.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # CAMINHOS DO PROJETO
 # =============================================================================
 
-BASE_DIR      = Path(__file__ ).resolve().parent.parent.parent
+BASE_DIR      = Path(__file__).resolve().parent.parent.parent
 RAW_DIR       = BASE_DIR / "data" / "raw"
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
 CONFIG_PATH   = BASE_DIR / "src" / "parser" / "config.json"
@@ -51,9 +66,9 @@ load_dotenv()
 CHAVE_API = os.getenv("GEMINI_API_KEY")
 
 if not CHAVE_API:
-    print("ERRO: GEMINI_API_KEY não encontrada.")
-    print("Crie o arquivo .env na raiz do projeto com:")
-    print("  GEMINI_API_KEY=sua_chave_aqui")
+    logger.error("ERRO: GEMINI_API_KEY não encontrada.")
+    logger.error("Crie o arquivo .env na raiz do projeto com:")
+    logger.error("  GEMINI_API_KEY=sua_chave_aqui")
     sys.exit(1)
 
 client = genai.Client(api_key=CHAVE_API)
@@ -71,20 +86,6 @@ CAMPOS_CONTRATO = [
 
 # =============================================================================
 # DISTRIBUIÇÃO POR REGIÃO
-#
-# O boletim PDF dá totais de Londrina inteira.
-# O contrato exige dados por região: Norte, Sul, Leste, Oeste, Central, Rural.
-#
-# Fonte dos percentuais:
-#   Dashboard ARBOVIROSES da Prefeitura — gráfico "Notificados por Região"
-#   Esses valores são uma aproximação baseada nos dados históricos do dashboard.
-#   Atualizar conforme novos boletins forem publicados.
-#
-# Como atualizar:
-#   1. Abra o dashboard da Prefeitura
-#   2. Selecione o período do boletim
-#   3. Leia o gráfico "Notificados por Região"
-#   4. Atualize os valores abaixo
 # =============================================================================
 
 def load_regions_config(config_path: Path) -> list[tuple[str, str, float]]:
@@ -97,14 +98,14 @@ def load_regions_config(config_path: Path) -> list[tuple[str, str, float]]:
             if all(k in r for k in ["name", "type", "percentage"]):
                 regions.append((r["name"], r["type"], r["percentage"]))
             else:
-                print(f"ERRO: Configuração de região inválida em {config_path}. Faltando chaves 'name', 'type' ou 'percentage'.")
+                logger.error(f"ERRO: Configuração de região inválida em {config_path}. Faltando chaves 'name', 'type' ou 'percentage'.")
                 sys.exit(1)
         return regions
     except FileNotFoundError:
-        print(f"ERRO: Arquivo de configuração não encontrado: {config_path}")
+        logger.error(f"ERRO: Arquivo de configuração não encontrado: {config_path}")
         sys.exit(1)
     except json.JSONDecodeError:
-        print(f"ERRO: Arquivo de configuração JSON inválido: {config_path}")
+        logger.error(f"ERRO: Arquivo de configuração JSON inválido: {config_path}")
         sys.exit(1)
 
 REGIOES = load_regions_config(CONFIG_PATH)
@@ -115,9 +116,6 @@ assert abs(_soma - 1.109) < 0.02, f"Percentuais somam {_soma:.3f}, verifique REG
 
 # =============================================================================
 # O PROMPT
-#
-# Pedimos os TOTAIS MUNICIPAIS — o Gemini não precisa saber de regiões.
-# A distribuição por região é feita pelo nosso código depois.
 # =============================================================================
 
 PROMPT = """
@@ -185,7 +183,7 @@ def validar_totais(dados: dict) -> dict:
     }
     for campo, valor_padrao in padroes.items():
         if campo not in dados:
-            print(f"  ⚠ Campo '{campo}' ausente — usando {valor_padrao}")
+            logger.warning(f"Campo '{campo}' ausente na resposta do Gemini — usando {valor_padrao}")
             dados[campo] = valor_padrao
     return dados
 
@@ -193,21 +191,7 @@ def validar_totais(dados: dict) -> dict:
 def distribuir_por_regiao(totais: dict) -> list[dict]:
     """
     Distribui os totais municipais pelas 6 regiões usando percentuais do dashboard.
-
-    Exemplo:
-        totais["notified"] = 1000
-        Norte tem 37% → Norte.notified = 370
-        Sul tem 21.4% → Sul.notified = 214
-        ...
-
-    Fix #41: under_analysis NÃO é distribuído por percentual.
-    É calculado como restante: notified - confirmed - discarded
-    Isso garante que a soma sempre fecha: confirmed + discarded + under_analysis = notified
-
-    A última região dos demais campos recebe o restante para evitar
-    erros de arredondamento acumulado.
     """
-    # Campos distribuídos proporcionalmente (under_analysis é tratado separado)
     campos_proporcionais = [
         "notified", "confirmed", "discarded",
         "dengue_cases", "dengue_alarm_cases", "dengue_severe_cases",
@@ -215,7 +199,7 @@ def distribuir_por_regiao(totais: dict) -> list[dict]:
     ]
 
     linhas = []
-    soma_pct = sum(r[2] for r in REGIOES)  # normaliza se não somar exatamente 1
+    soma_pct = sum(r[2] for r in REGIOES)
 
     for i, (nome, tipo, pct) in enumerate(REGIOES):
         linha = {
@@ -228,15 +212,11 @@ def distribuir_por_regiao(totais: dict) -> list[dict]:
             total = totais.get(campo, 0)
 
             if i < len(REGIOES) - 1:
-                # Distribui proporcionalmente
                 linha[campo] = round(total * (pct / soma_pct))
             else:
-                # Última região: pega o restante para fechar o total exato
                 ja_distribuido = sum(linhas[j][campo] for j in range(len(linhas)))
                 linha[campo] = max(0, total - ja_distribuido)
 
-        # Fix #41: under_analysis = notified - confirmed - discarded
-        # Garante que confirmed + discarded + under_analysis = notified sempre
         linha["under_analysis"] = max(0, linha["notified"] - linha["confirmed"] - linha["discarded"])
 
         linhas.append(linha)
@@ -247,30 +227,23 @@ def distribuir_por_regiao(totais: dict) -> list[dict]:
 def salvar_csv(linhas: list[dict], caminho_saida: Path) -> None:
     """
     Grava as linhas como CSV no formato exato do contrato.
-    Uma linha por região — 6 linhas no total.
     """
     caminho_saida.parent.mkdir(parents=True, exist_ok=True)
     with open(caminho_saida, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CAMPOS_CONTRATO, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(linhas)
-    print(f"  ✔ CSV salvo: {caminho_saida} ({len(linhas)} linhas)")
+    logger.info(f"CSV salvo: {caminho_saida} ({len(linhas)} linhas)")
 
 
 def _extrair_mes_do_nome(stem: str) -> str | None:
     """
-    Fix #40: extrai o mês do nome do arquivo para garantir month correto.
-    Suporta formatos:
-      - "2025-03"         → "03/2025"
-      - "boletim_03_2025" → "03/2025"  (formato antigo)
-    O nome do arquivo é mais confiável que o Gemini para esse campo.
+    Extrai o mês do nome do arquivo para garantir month correto.
     """
     import re
-    # Formato novo: YYYY-MM
     m = re.match(r"(\d{4})-(\d{2})", stem)
     if m:
         return f"{m.group(2)}/{m.group(1)}"
-    # Formato antigo: boletim_NN_YYYY
     m = re.search(r"_(\d{2})_(\d{4})", stem)
     if m:
         return f"{m.group(1)}/{m.group(2)}"
@@ -279,56 +252,65 @@ def _extrair_mes_do_nome(stem: str) -> str | None:
 
 def processar_pdf(caminho_pdf: Path) -> None:
     """
-    Pipeline completo:
-    1. Lê o PDF
-    2. Gemini extrai totais municipais
-    3. Distribui por região (6 linhas)
-    4. Salva CSV
+    Pipeline completo para processar um PDF.
     """
-    print(f"\nProcessando: {caminho_pdf.name}")
+    logger.info(f"\nProcessando: {caminho_pdf.name}")
 
-    with open(caminho_pdf, "rb") as f:
-        pdf_bytes = f.read()
-    print(f"  → PDF lido ({len(pdf_bytes) // 1024} KB)")
+    try:
+        with open(caminho_pdf, "rb") as f:
+            pdf_bytes = f.read()
+        logger.info(f"PDF lido ({len(pdf_bytes) // 1024} KB)")
+    except FileNotFoundError:
+        logger.error(f"ERRO: Arquivo PDF não encontrado: {caminho_pdf}")
+        return
 
-    print("  → Enviando para o Gemini...")
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=[
-            types.Part.from_bytes(data=pdf_bytes, mime_type="application/pdf"),
-            PROMPT,
-        ]
-    )
+    logger.info("Enviando para o Gemini...")
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[
+                types.Part.from_bytes(data=pdf_bytes, mime_type="application/pdf"),
+                PROMPT,
+            ],
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+        )
+        # Adicionado para lidar com possíveis atributos ausentes na resposta
+        if not hasattr(response, 'text'):
+            logger.error(f"Resposta do Gemini não contém atributo 'text'. Resposta completa: {response}")
+            return
+        texto_limpo = limpar_resposta(response.text)
 
-    texto_limpo = limpar_resposta(response.text)
+    except GoogleAPIError as e:
+        logger.error(f"ERRO na API do Gemini: {e}")
+        return
+    except Exception as e:
+        logger.error(f"ERRO inesperado ao chamar Gemini: {e}")
+        return
 
     try:
         totais = json.loads(texto_limpo)
     except json.JSONDecodeError as e:
-        print(f"  ✘ Gemini não devolveu JSON válido: {e}")
-        print(f"  Resposta recebida:\n{texto_limpo[:300]}")
+        logger.error(f"Gemini não devolveu JSON válido: {e}")
+        logger.error(f"Resposta recebida:\n{texto_limpo[:500]}...")
         return
 
     totais = validar_totais(totais)
 
-    # Fix #40: month derivado do nome do arquivo — mais confiável que o Gemini
     mes_do_arquivo = _extrair_mes_do_nome(caminho_pdf.stem)
     if mes_do_arquivo:
         totais["month"] = mes_do_arquivo
 
-    print(f"  → Totais municipais extraídos:")
-    print(f"     Mês:      {totais['month']}")
-    print(f"     Notificados: {totais['notified']}")
-    print(f"     Confirmados: {totais['confirmed']}")
-    print(f"     Descartados: {totais['discarded']}")
-    print(f"     Em análise:  {totais['under_analysis']}")
-    print(f"     Óbitos:      {totais['deaths']}")
+    logger.info(f"Totais municipais extraídos: {totais}")
 
     linhas = distribuir_por_regiao(totais)
 
-    print(f"  → Distribuição por região:")
     for l in linhas:
-        print(f"     {l['region']:10} notified={l['notified']:5}  confirmed={l['confirmed']:4}  risk_type={l['type']}")
+        logger.debug(f"Distribuição por região: {l['region']} notified={l['notified']} confirmed={l['confirmed']} risk_type={l['type']}")
 
     nome_saida = caminho_pdf.stem + ".csv"
     salvar_csv(linhas, PROCESSED_DIR / nome_saida)
@@ -340,18 +322,18 @@ def main() -> None:
         if not pdf.is_absolute():
             pdf = RAW_DIR / pdf
         if not pdf.exists():
-            print(f"ERRO: arquivo não encontrado — {pdf}")
+            logger.error(f"ERRO: arquivo não encontrado — {pdf}")
             sys.exit(1)
         processar_pdf(pdf)
     else:
         pdfs = sorted(RAW_DIR.glob("*.pdf"))
         if not pdfs:
-            print(f"Nenhum PDF encontrado em {RAW_DIR}")
-            sys.exit(1)
-        print(f"Encontrados {len(pdfs)} PDF(s) em data/raw/")
+            logger.info(f"Nenhum PDF encontrado em {RAW_DIR}")
+            sys.exit(0) # Exit with 0 as it's not an error if no PDFs are found
+        logger.info(f"Encontrados {len(pdfs)} PDF(s) em data/raw/")
         for pdf in pdfs:
             processar_pdf(pdf)
-    print("\nConcluído.")
+    logger.info("\nConcluído.")
 
 
 if __name__ == "__main__":
