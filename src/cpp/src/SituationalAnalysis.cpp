@@ -7,7 +7,7 @@
 #include <limits>
 #include <cmath>
 
-SituationalAnalysis::HighestRiskRegion SituationalAnalysis::highestRisk(const LinkedList& list) {
+HighestRiskRegion SituationalAnalysis::highestRisk(LinkedList& list) {
     LOG_INFO("Calculando a região de maior risco.");
     HighestRiskRegion result = {"", -1.0};
     Node* current = list.getHead();
@@ -26,7 +26,7 @@ SituationalAnalysis::HighestRiskRegion SituationalAnalysis::highestRisk(const Li
     return result;
 }
 
-SituationalAnalysis::RegionGrowth SituationalAnalysis::growthRate(const LinkedList& list, const std::string& regionName) {
+RegionGrowth SituationalAnalysis::growthRate(LinkedList& list, const std::string& regionName) {
     LOG_INFO("Calculando taxa de crescimento para a região: " + regionName);
     RegionGrowth result = {"", 0.0};
     Locality* locality = list.find(regionName);
