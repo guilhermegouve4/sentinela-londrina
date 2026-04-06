@@ -4,16 +4,16 @@
 #include "../include/Locality.h"
 #include "../include/MonthlyBulletin.h"
 #include "../include/SituationalAnalysis.h"
-#include "../include/Logger.h" // Incluir o logger
+#include "../include/Logger.h"
 
 #include <fstream>
 #include <iomanip>
-#include <cmath> // Para std::isnan
+#include <cmath>
 
 void JSONWriter::write(LinkedList &list, const std::string &outputPath) {
     LOG_INFO("Iniciando escrita do JSON para " + outputPath);
     SituationalAnalysis sa;
-    SituationalAnalysis::HighestRiskRegion hr = sa.highestRisk(list);
+    HighestRiskRegion hr = sa.highestRisk(list);
 
     std::ofstream file(outputPath);
     if (!file.is_open()) {
@@ -37,7 +37,7 @@ void JSONWriter::write(LinkedList &list, const std::string &outputPath) {
     while (node != nullptr) {
         Locality *locality = node->data;
 
-        double growthRate = sa.growthRate(list, locality->getName()).growthRate; // Obter o growthRate
+        double growthRate = sa.growthRate(list, locality->getName()).growthRate;
 
         if (!firstLocality) file << ",\n";
         firstLocality = false;
@@ -49,7 +49,7 @@ void JSONWriter::write(LinkedList &list, const std::string &outputPath) {
         file << "      \"status\": \""       << sa.getStatus(locality->calculateRisk()) << "\",\n";
         
         if (std::isnan(growthRate)) {
-            file << "      \"growth_rate\": null,\n"; // Representar NaN como null no JSON
+            file << "      \"growth_rate\": null,\n";
             LOG_WARNING("Taxa de crescimento para " + locality->getName() + " é NaN. Exportando como null.");
         } else {
             file << "      \"growth_rate\": "   << std::fixed << std::setprecision(2) << growthRate << ",\n";
