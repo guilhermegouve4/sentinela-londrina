@@ -1,0 +1,102 @@
+name: Sentinela Londrina CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Permite executar o workflow manualmente
+
+env:
+  # Definir variáveis de ambiente para o workflow
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "20.x"
+
+jobs:
+  build-and-process:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install python-dotenv google-generativeai
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install Node.js dependencies
+      run: |
+        npm install --prefix src/frontend
+
+    - name: Make run_pipeline.sh executable
+      run: chmod +x run_pipeline.sh
+
+    - name: Run processing pipeline
+      run: ./run_pipeline.sh
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+    - name: Upload processed data (result.json)
+      uses: actions/upload-artifact@v4
+      with:
+        name: processed-data
+        path: src/frontend/public/result.json
+
+    - name: Upload logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: logs
+        path: |
+          parser.log
+          backend.log
+
+  deploy-frontend:
+    needs: build-and-process
+    runs-on: ubuntu-latest
+    environment: production # Exemplo de ambiente de deploy
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download processed data
+      uses: actions/download-artifact@v4
+      with:
+        name: processed-data
+        path: src/frontend/public/
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install Node.js dependencies
+      run: npm install --prefix src/frontend
+
+    - name: Build frontend
+      run: npm run build --prefix src/frontend
+
+    - name: Deploy to Vercel (Example)
+      # Este é um exemplo. Você precisaria configurar sua própria ação de deploy.
+      # Por exemplo, para Vercel:
+      # uses: amondnet/vercel-action@v20
+      # with:
+      #   vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #   vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #   vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #   working-directory: ./src/frontend
+      run: echo "Simulando deploy do frontend..."
