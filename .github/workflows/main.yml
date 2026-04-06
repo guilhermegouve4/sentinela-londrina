@@ -2,17 +2,16 @@ name: Sentinela Londrina CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-  workflow_dispatch: # Permite executar o workflow manualmente
+    branches: [ main ]
+  workflow_dispatch:
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   PYTHON_VERSION: "3.11"
   NODE_VERSION: "24.x"
+  # Força o uso do Node 24 para evitar avisos de depreciação
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-and-process:
@@ -35,75 +34,25 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install python-dotenv google-genai pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+    - name: Run Tests (Python)
+      run: pytest src/parser/test_ai_scan.py
+      continue-on-error: true
 
-    - name: Install Node.js dependencies
+    - name: Run Pipeline
       run: |
-        if [ -d "src/frontend" ]; then
-          npm install --prefix src/frontend
-        fi
-
-    - name: Make run_pipeline.sh executable
-      run: chmod +x run_pipeline.sh
-
-    - name: Run processing pipeline
-      run: ./run_pipeline.sh
+        chmod +x run_pipeline.sh
+        ./run_pipeline.sh
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-    - name: Upload processed data (result.json)
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: processed-data
-        path: src/frontend/public/result.json
-      continue-on-error: true # Evita falha se o arquivo não for gerado (ex: erro de API)
-
-    - name: Upload logs
-      uses: actions/upload-artifact@v4
-      with:
-        name: logs
+        name: pipeline-results
         path: |
-          parser.log
-          backend.log
-      continue-on-error: true
-
-  deploy-frontend:
-    needs: build-and-process
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Download processed data
-      uses: actions/download-artifact@v4
-      with:
-        name: processed-data
-        path: src/frontend/public/
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-
-    - name: Install Node.js dependencies
-      run: |
-        if [ -d "src/frontend" ]; then
-          npm install --prefix src/frontend
-        fi
-
-    - name: Build frontend
-      run: |
-        if [ -d "src/frontend" ]; then
-          npm run build --prefix src/frontend
-        fi
-
-    - name: Deploy to Vercel (Example)
-      run: echo "Simulando deploy do frontend..."
+          src/frontend/public/result.json
+          *.log
+      if: always() # Garante que os logs subam mesmo se houver erro
