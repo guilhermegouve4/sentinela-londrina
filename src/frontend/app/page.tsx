@@ -96,6 +96,7 @@ export default function VisaoGeral() {
           <tbody>
             {regioes.map((region, idx) => {
               const b = latest(region);
+              const growthRateDisplay = isNaN(region.growth_rate) ? "N/A" : `${region.growth_rate.toFixed(2)}×`;
               return (
                 <tr key={region.name} className={`border-b border-gray-50 hover:bg-gray-50 transition-colors ${idx === regioes.length - 1 ? "border-b-0" : ""}`}>
                   <td className="px-6 py-4">
@@ -107,7 +108,7 @@ export default function VisaoGeral() {
                   <td className="px-6 py-4 text-sm text-gray-700">{fmt.number(b.notified)}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{fmt.number(b.confirmed)}</td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{fmt.percent(region.risk)}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{region.growth_rate.toFixed(2)}×</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{growthRateDisplay}</td>
                   <td className="px-6 py-4">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-md ${STATUS_BADGE[region.status]}`}>
                       {{ critical: "Crítico", alert: "Alerta", normal: "Normal" }[region.status]}
