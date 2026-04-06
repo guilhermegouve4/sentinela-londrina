@@ -1,0 +1,10 @@
+{
+    "REGIOES": [
+        {"name": "Norte",    "type": "urban",  "percentage": 0.370},
+        {"name": "Sul",      "type": "urban",  "percentage": 0.214},
+        {"name": "Leste",    "type": "urban",  "percentage": 0.131},
+        {"name": "Oeste",    "type": "urban",  "percentage": 0.131},
+        {"name": "Central",  "type": "urban",  "percentage": 0.147},
+        {"name": "Rural",    "type": "rural",  "percentage": 0.116}
+    ]
+}
