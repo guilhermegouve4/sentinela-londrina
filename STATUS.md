@@ -1,14 +1,14 @@
 # STATUS — AEP Sentinela Londrina
 
-> Última atualização: 05/04/2026 | Entrega: 06/04/2026 (1 dia)
+> Última atualização: 06/04/2026 | Entrega parcial: ✅ ENTREGUE
 
 ## FASE ATUAL
 
-Projeto completo. Pipeline end-to-end funcionando: PDF → Parser Python (Gemini) → CSV → C++ (LinkedList) → result.json → Dashboard Next.js. Faltam UML e documento ABNT.
+Entrega parcial concluída. Pipeline end-to-end funcionando: PDF → Parser Python (Gemini) → CSV → C++ (LinkedList) → result.json → Dashboard Next.js. UML e ABNT entregues. Próxima entrega: 08/06/2026.
 
 ## PROGRESSO
 
-🟩🟩🟩🟩🟩🟩🟩🟩🟩🟨 95%
+🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 100% (parcial)
 
 ## ENTREGÁVEIS
 
@@ -30,8 +30,8 @@ Projeto completo. Pipeline end-to-end funcionando: PDF → Parser Python (Gemini
 | #12 | Integração end-to-end: CSV → C++ → result.json | Guilherme | ✅ Feito |
 | #9  | Wireframes do dashboard | Gabriel + Alan | ✅ Feito |
 | #19 | Dashboard Next.js — 9 páginas com dados reais | Gabriel | ✅ Feito |
-| #11 | Documento ABNT | Grupo | 🔄 Em andamento |
-| #10 | Diagrama de Classes UML | Alan | 🔄 Em andamento |
+| #11 | Documento ABNT (1ª entrega) | Grupo | ✅ Feito |
+| #10 | Diagrama de Classes UML | Alan | ✅ Feito |
 | #18 | Pitch de 5 minutos | Grupo | ⏳ Pendente |
 
 ## O QUE FOI FEITO (por sessão)
@@ -45,6 +45,7 @@ Projeto completo. Pipeline end-to-end funcionando: PDF → Parser Python (Gemini
 - **01/04** — Sessão 7: `main.cpp`, `SituationalAnalysis` implementados. Pipeline end-to-end validado. ADRs 013-017 registrados.
 - **03/04** — Sessão 8: Dashboard completo — 9 páginas implementadas com dados reais do `result.json` (Visão Geral, Evolução, Relatório, Alertas, Boletins, Filtros, Histórico, Hierarquia, Ingestão). Fix issues #40 e #41 no parser. CSVs e `result.json` regenerados.
 - **05/04** — Sessão 9: Verificação end-to-end. Issues #39, #40, #41 confirmadas como resolvidas nos CSVs. Frontend confirmado sem mocks — 8/9 páginas consomem `result.json` real; Ingestão é utilitária. Fix de responsividade mobile e favicon (Gabriel).
+- **06/04** — Sessão 10: Entrega parcial concluída. UML (Alan) e ABNT (grupo) entregues. Backend revisado e consolidado: Logger removido (feedback via compilador e result.json), testes e CI removidos (reimplementação planejada para a entrega final com entendimento real). NaN → null no JSONWriter mantido (ADR 016). PR conventions alinhadas com o grupo.
 
 ## DECISÕES DE ARQUITETURA (ADRs)
 
@@ -73,5 +74,5 @@ Projeto completo. Pipeline end-to-end funcionando: PDF → Parser Python (Gemini
 
 ## BLOQUEIOS
 
-- UML ainda não criado (Alan)
-- Documento ABNT em andamento (grupo)
+- Nenhum para a entrega parcial ✅
+- Entrega final: aguardando feedback dos professores para refatorações
