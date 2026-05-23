@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { loadResultData, fmt, STATUS_BADGE } from "../../lib/data";
-import { ResultData, Region, Bulletin } from "../../types/result";
+import { useState, useMemo } from "react";
+import { fmt, STATUS_BADGE } from "../../lib/data";
+import { useResultData } from "../../lib/use-result-data";
+import { Region, Bulletin } from "../../types/result";
 import { Search } from "lucide-react";
 
 interface LinhaTabela {
@@ -46,21 +47,13 @@ function Th({
 }
 
 export default function Filtros() {
-  const [data, setData]                   = useState<ResultData | null>(null);
-  const [error, setError]                 = useState<string | null>(null);
+  const { data, error, loading } = useResultData();
   const [busca, setBusca]                 = useState("");
   const [filtroRegiao, setFiltroRegiao]   = useState("todas");
   const [filtroStatus, setFiltroStatus]   = useState("todos");
   const [filtroMes, setFiltroMes]         = useState("todos");
   const [ordenar, setOrdenar]             = useState<ColKey>("risk");
   const [ordem, setOrdem]                 = useState<"asc" | "desc">("desc");
-
-  useEffect(() => {
-    loadResultData().then(r => {
-      if ("error" in r) setError(r.error);
-      else setData(r.data);
-    });
-  }, []);
 
   const linhas: LinhaTabela[] = useMemo(() => {
     if (!data) return [];
@@ -104,7 +97,7 @@ export default function Filtros() {
   };
 
   if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!data) return (
+  if (loading || !data) return (
     <div className="p-8 text-gray-500 flex items-center gap-2">
       <div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin" />
       Carregando...

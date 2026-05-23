@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { loadResultData, fmt, STATUS_BADGE, BAR_COLOR } from "../../lib/data";
-import { ResultData } from "../../types/result";
+import { useState } from "react";
+import { fmt, STATUS_BADGE } from "../../lib/data";
+import { useResultData } from "../../lib/use-result-data";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const CORES: Record<string, string> = {
@@ -11,24 +11,15 @@ const CORES: Record<string, string> = {
 };
 
 export default function Historico() {
-  const [data, setData]         = useState<ResultData | null>(null);
-  const [error, setError]       = useState<string | null>(null);
-  const [regiao, setRegiao]     = useState<string>("");
-
-  useEffect(() => {
-    loadResultData().then(r => {
-      if ("error" in r) setError(r.error);
-      else {
-        setData(r.data);
-        // Seleciona por padrão a região de maior risco
-        const sorted = [...r.data.regions].sort((a, b) => b.risk - a.risk);
-        setRegiao(sorted[0].name);
-      }
-    });
-  }, []);
+  const { data, error, loading } = useResultData();
+  const [regiaoSelecionada, setRegiaoSelecionada] = useState<string | null>(null);
 
   if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!data)  return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
+  if (loading || !data) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
+
+  const regiao =
+    regiaoSelecionada ??
+    [...data.regions].sort((a, b) => b.risk - a.risk)[0].name;
 
   const regiaoData = data.regions.find(r => r.name === regiao);
   if (!regiaoData) return null;
@@ -63,7 +54,7 @@ export default function Historico() {
       {/* Seletor de região */}
       <div className="flex gap-3 mb-6 flex-wrap">
         {[...data.regions].sort((a, b) => b.risk - a.risk).map(r => (
-          <button key={r.name} onClick={() => setRegiao(r.name)}
+          <button key={r.name} onClick={() => setRegiaoSelecionada(r.name)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
               regiao === r.name
                 ? "bg-red-600 text-white border-red-600"

@@ -18,6 +18,8 @@ npm install
 npm run dev
 ```
 
+O script `dev` usa Webpack (flag `--webpack`) para evitar recarregamentos em loop do Turbopack no ambiente local.
+
 Acesse `http://localhost:3000`.
 
 ## Páginas

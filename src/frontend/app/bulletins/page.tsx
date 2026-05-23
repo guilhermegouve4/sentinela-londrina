@@ -1,24 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { loadResultData, fmt, STATUS_BADGE } from "../../lib/data";
-import { ResultData } from "../../types/result";
+import { useState } from "react";
+import { fmt, STATUS_BADGE } from "../../lib/data";
+import { useResultData } from "../../lib/use-result-data";
 
 export default function Boletins() {
-  const [data, setData]             = useState<ResultData | null>(null);
-  const [error, setError]           = useState<string | null>(null);
+  const { data, error, loading } = useResultData();
   const [filtroRegiao, setFiltroRegiao] = useState("todas");
   const [filtroStatus, setFiltroStatus] = useState("todos");
 
-  useEffect(() => {
-    loadResultData().then(r => {
-      if ("error" in r) setError(r.error);
-      else setData(r.data);
-    });
-  }, []);
-
   if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!data)  return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
+  if (loading || !data) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
   // Gera linhas planas de todos os boletins de todas as regiões
   const linhas = data.regions.flatMap(r =>

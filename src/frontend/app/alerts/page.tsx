@@ -1,24 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { loadResultData, fmt } from "../../lib/data";
-import { ResultData, Summary } from "../../types/result";
+import { fmt } from "../../lib/data";
+import { useResultData } from "../../lib/use-result-data";
 import { AlertTriangle, TrendingUp, Activity, CheckCircle } from "lucide-react";
 
 export default function Alertas() {
-  const [data, setData]       = useState<ResultData | null>(null);
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [error, setError]     = useState<string | null>(null);
-
-  useEffect(() => {
-    loadResultData().then(r => {
-      if ("error" in r) setError(r.error);
-      else { setData(r.data); setSummary(r.summary); }
-    });
-  }, []);
+  const { data, summary, error, loading } = useResultData();
 
   if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!data || !summary) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
+  if (loading || !data || !summary) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
   // Gera alertas dinamicamente a partir dos dados reais
   const alertas = data.regions

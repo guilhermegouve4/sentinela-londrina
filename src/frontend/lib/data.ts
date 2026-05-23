@@ -7,6 +7,12 @@ let cache: ResultData | null = null;
 let cacheTime = 0;
 const CACHE_MS = 30000;
 
+/** Dados já em memória (evita flash de "Carregando" após HMR). */
+export function getWarmCache(): { data: ResultData; summary: Summary } | null {
+  if (!cache) return null;
+  return { data: cache, summary: calcSummary(cache) };
+}
+
 export async function loadResultData(): Promise<{ data: ResultData; summary: Summary } | { error: string }> {
   try {
     const now = Date.now();

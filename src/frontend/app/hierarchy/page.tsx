@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { loadResultData, fmt, STATUS_BADGE } from "../../lib/data";
-import { ResultData } from "../../types/result";
+import { useState } from "react";
+import { fmt, STATUS_BADGE } from "../../lib/data";
+import { useResultData } from "../../lib/use-result-data";
 import { ChevronRight, ChevronDown, Building2, MapPin, Activity } from "lucide-react";
 
 // Hierarquia estática baseada na estrutura real das regiões de Londrina
@@ -16,20 +16,12 @@ const HIERARQUIA: Record<string, string[]> = {
 };
 
 export default function Hierarquia() {
-  const [data, setData]       = useState<ResultData | null>(null);
-  const [error, setError]     = useState<string | null>(null);
+  const { data, error, loading } = useResultData();
   const [abertos, setAbertos] = useState<Set<string>>(new Set(["Norte"]));
   const [selecionada, setSelecionada] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadResultData().then(r => {
-      if ("error" in r) setError(r.error);
-      else setData(r.data);
-    });
-  }, []);
-
   if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!data)  return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
+  if (loading || !data) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
   const toggle = (nome: string) => {
     setAbertos(prev => {

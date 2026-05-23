@@ -1,21 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { loadResultData, fmt, STATUS_BADGE, BAR_COLOR } from "../lib/data";
-import { ResultData, Summary } from "../types/result";
+import { fmt, STATUS_BADGE, BAR_COLOR } from "../lib/data";
+import { useResultData } from "../lib/use-result-data";
 import { Users, CheckCircle, AlertTriangle, Skull, TrendingUp, Activity } from "lucide-react";
 
 export default function VisaoGeral() {
-  const [data, setData]       = useState<ResultData | null>(null);
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [error, setError]     = useState<string | null>(null);
-
-  useEffect(() => {
-    loadResultData().then(r => {
-      if ("error" in r) setError(r.error);
-      else { setData(r.data); setSummary(r.summary); }
-    });
-  }, []);
+  const { data, summary, error, loading } = useResultData();
 
   if (error) return (
     <div className="p-8">
@@ -26,7 +16,7 @@ export default function VisaoGeral() {
     </div>
   );
 
-  if (!data || !summary) return (
+  if (loading || !summary || !data) return (
     <div className="p-8 flex items-center gap-3 text-gray-500">
       <div className="w-5 h-5 border-2 border-gray-300 border-t-red-500 rounded-full animate-spin" />
       Carregando dados...
