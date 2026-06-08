@@ -1,29 +1,3 @@
-"""
-ia_scan.py
-Parser inteligente: usa o Gemini para ler PDFs epidemiológicos
-e gerar CSVs no formato EXATO do contrato (docs/contrato-csv.md).
-
-Como funciona:
-    PDF → Gemini extrai totais municipais → distribui por região → salva CSV
-
-Por que distribuir por região?
-    O boletim PDF da Prefeitura de Londrina dá totais do município inteiro.
-    O contrato CSV exige uma linha por região (Norte, Sul, Leste, Oeste, Central, Rural).
-    Usamos os percentuais do Dashboard da Prefeitura para distribuir os totais.
-
-Fonte dos percentuais:
-    Dashboard ARBOVIROSES da Prefeitura de Londrina:
-    https://lookerstudio.google.com/reporting/a0e44fa8-253f-4dea-a35b-eb7c6f831a1b
-
-Uso:
-    python ia_scan.py                  # processa todos os PDFs em data/raw/
-    python ia_scan.py boletim_x.pdf    # processa um PDF específico
-
-Configuração necessária:
-    Criar arquivo .env na raiz do projeto com:
-    GEMINI_API_KEY=sua_chave_aqui
-"""
-
 import os
 import json
 import csv
@@ -35,9 +9,6 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-# =============================================================================
-# CONFIGURAÇÃO DE LOGGING
-# =============================================================================
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -48,18 +19,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# =============================================================================
-# CAMINHOS DO PROJETO
-# =============================================================================
-
 BASE_DIR      = Path(__file__).resolve().parent.parent.parent
 RAW_DIR       = BASE_DIR / "data" / "raw"
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
 CONFIG_PATH   = BASE_DIR / "src" / "parser" / "config.json"
-
-# =============================================================================
-# CONFIGURAÇÃO DA API
-# =============================================================================
 
 load_dotenv()
 CHAVE_API = os.getenv("GEMINI_API_KEY")
@@ -72,20 +35,12 @@ if not CHAVE_API:
 
 client = genai.Client(api_key=CHAVE_API)
 
-# =============================================================================
-# CAMPOS DO CONTRATO CSV (ordem exata de docs/contrato-csv.md)
-# =============================================================================
-
 CAMPOS_CONTRATO = [
     "region", "type", "month",
     "notified", "confirmed", "discarded", "under_analysis",
     "dengue_cases", "dengue_alarm_cases", "dengue_severe_cases",
     "zika_cases", "chikungunya_cases", "deaths",
 ]
-
-# =============================================================================
-# DISTRIBUIÇÃO POR REGIÃO
-# =============================================================================
 
 def load_regions_config(config_path: Path) -> list[tuple[str, str, float]]:
     try:
@@ -109,14 +64,8 @@ def load_regions_config(config_path: Path) -> list[tuple[str, str, float]]:
 
 REGIOES = load_regions_config(CONFIG_PATH)
 
-# Verificação: percentuais devem somar ~1.0
 _soma = sum(r[2] for r in REGIOES)
-# Ajustado para tolerar a soma de 1.109 que estava no código original ou 1.0
 assert abs(_soma - 1.109) < 0.05 or abs(_soma - 1.0) < 0.05, f"Percentuais somam {_soma:.3f}, verifique REGIOES em {CONFIG_PATH}"
-
-# =============================================================================
-# O PROMPT
-# =============================================================================
 
 PROMPT = """
 Você é um extrator de dados epidemiológicos especializado em boletins da Prefeitura de Londrina.
@@ -162,7 +111,6 @@ NÃO inclua o campo "region" — esse campo é gerenciado pelo sistema.
 
 
 def limpar_resposta(texto: str) -> str:
-    """Remove marcadores de código markdown da resposta do Gemini."""
     texto = texto.strip()
     if texto.startswith("```"):
         linhas = texto.split("\n")
@@ -171,10 +119,6 @@ def limpar_resposta(texto: str) -> str:
 
 
 def validar_totais(dados: dict) -> dict:
-    """
-    Garante que todos os campos numéricos estão presentes.
-    Campos faltantes recebem 0.
-    """
     padroes = {
         "month": "01/2025",
         "notified": 0, "confirmed": 0, "discarded": 0, "under_analysis": 0,
@@ -189,9 +133,6 @@ def validar_totais(dados: dict) -> dict:
 
 
 def distribuir_por_regiao(totais: dict) -> list[dict]:
-    """
-    Distribui os totais municipais pelas 6 regiões usando percentuais do dashboard.
-    """
     campos_proporcionais = [
         "notified", "confirmed", "discarded",
         "dengue_cases", "dengue_alarm_cases", "dengue_severe_cases",
@@ -225,9 +166,6 @@ def distribuir_por_regiao(totais: dict) -> list[dict]:
 
 
 def salvar_csv(linhas: list[dict], caminho_saida: Path) -> None:
-    """
-    Grava as linhas como CSV no formato exato do contrato.
-    """
     caminho_saida.parent.mkdir(parents=True, exist_ok=True)
     with open(caminho_saida, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CAMPOS_CONTRATO, extrasaction="ignore")
@@ -237,9 +175,6 @@ def salvar_csv(linhas: list[dict], caminho_saida: Path) -> None:
 
 
 def _extrair_mes_do_nome(stem: str) -> str | None:
-    """
-    Extrai o mês do nome do arquivo para garantir month correto.
-    """
     import re
     m = re.match(r"(\d{4})-(\d{2})", stem)
     if m:
@@ -251,9 +186,6 @@ def _extrair_mes_do_nome(stem: str) -> str | None:
 
 
 def processar_pdf(caminho_pdf: Path) -> None:
-    """
-    Pipeline completo para processar um PDF.
-    """
     logger.info(f"Processando: {caminho_pdf.name}")
 
     try:
@@ -266,7 +198,6 @@ def processar_pdf(caminho_pdf: Path) -> None:
 
     logger.info("Enviando para o Gemini...")
     try:
-        # Usando a nova SDK google-genai
         response = client.models.generate_content(
             model="gemini-2.0-flash",
             contents=[
@@ -275,30 +206,18 @@ def processar_pdf(caminho_pdf: Path) -> None:
             ],
             config=types.GenerateContentConfig(
                 safety_settings=[
-                    types.SafetySetting(
-                        category="HARM_CATEGORY_HATE_SPEECH",
-                        threshold="BLOCK_NONE",
-                    ),
-                    types.SafetySetting(
-                        category="HARM_CATEGORY_DANGEROUS_CONTENT",
-                        threshold="BLOCK_NONE",
-                    ),
-                    types.SafetySetting(
-                        category="HARM_CATEGORY_HARASSMENT",
-                        threshold="BLOCK_NONE",
-                    ),
-                    types.SafetySetting(
-                        category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                        threshold="BLOCK_NONE",
-                    ),
+                    types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH",        threshold="BLOCK_NONE"),
+                    types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT",  threshold="BLOCK_NONE"),
+                    types.SafetySetting(category="HARM_CATEGORY_HARASSMENT",         threshold="BLOCK_NONE"),
+                    types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT",  threshold="BLOCK_NONE"),
                 ]
             )
         )
-        
+
         if not response.text:
             logger.error("Resposta do Gemini vazia.")
             return
-            
+
         texto_limpo = limpar_resposta(response.text)
 
     except Exception as e:

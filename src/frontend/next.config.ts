@@ -1,18 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* Configurações para PWA */
-  
-  // Habilita compressão de assets
   compress: true,
 
-  // Configurações de cache
   onDemandEntries: {
     maxInactiveAge: 60 * 1000,
     pagesBufferLength: 5,
   },
 
-  // Headers para cache e segurança
   async headers() {
     return [
       {
@@ -71,7 +66,6 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Redirects para melhor experiência
   async redirects() {
     return [
       {
@@ -82,7 +76,6 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Rewrites para API (se necessário)
   async rewrites() {
     return {
       beforeFiles: [],

@@ -24,7 +24,6 @@ export default function Historico() {
   const regiaoData = data.regions.find(r => r.name === regiao);
   if (!regiaoData) return null;
 
-  // Ordena bulletins do mais antigo para o mais recente para o gráfico
   const bulletinsOrdenados = [...regiaoData.bulletins].reverse();
 
   const chartData = bulletinsOrdenados.map(b => ({
@@ -35,14 +34,13 @@ export default function Historico() {
     grave: b.dengueSevereCases,
   }));
 
-  // Variação mês a mês
   const variacoes = bulletinsOrdenados.map((b, i) => {
     const prev = bulletinsOrdenados[i - 1];
     const variacao = prev && prev.confirmed > 0
       ? ((b.confirmed - prev.confirmed) / prev.confirmed * 100)
       : null;
     return { ...b, variacao };
-  }).reverse(); // volta para mais recente primeiro na tabela
+  }).reverse();
 
   return (
     <div className="p-8">
@@ -51,7 +49,6 @@ export default function Historico() {
         <p className="text-sm text-gray-500 mt-1">Evolução mensal detalhada de cada região administrativa</p>
       </div>
 
-      {/* Seletor de região */}
       <div className="flex gap-3 mb-6 flex-wrap">
         {[...data.regions].sort((a, b) => b.risk - a.risk).map(r => (
           <button key={r.name} onClick={() => setRegiaoSelecionada(r.name)}
@@ -68,7 +65,6 @@ export default function Historico() {
         ))}
       </div>
 
-      {/* Cards da região selecionada */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
           { label: "Risco atual",      value: fmt.percent(regiaoData.risk),              color: `text-${{ critical: "red", alert: "yellow", normal: "green" }[regiaoData.status]}-600` },
@@ -83,7 +79,6 @@ export default function Historico() {
         ))}
       </div>
 
-      {/* Gráfico de evolução */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <h2 className="text-sm font-medium text-gray-700 mb-4">Evolução Mensal — {regiao}</h2>
         <ResponsiveContainer width="100%" height={300}>
@@ -99,7 +94,6 @@ export default function Historico() {
         </ResponsiveContainer>
       </div>
 
-      {/* Tabela histórica */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
           <h2 className="text-sm font-medium text-gray-700">Linha do Tempo — {regiao}</h2>

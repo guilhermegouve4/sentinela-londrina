@@ -1,13 +1,9 @@
-// lib/data.ts
-// Camada de dados — carrega result.json e calcula summary
-
 import { ResultData, Summary, Region, Bulletin } from '../types/result';
 
 let cache: ResultData | null = null;
 let cacheTime = 0;
 const CACHE_MS = 30000;
 
-/** Dados já em memória (evita flash de "Carregando" após HMR). */
 export function getWarmCache(): { data: ResultData; summary: Summary } | null {
   if (!cache) return null;
   return { data: cache, summary: calcSummary(cache) };
@@ -37,7 +33,6 @@ export async function loadResultData(): Promise<{ data: ResultData; summary: Sum
   }
 }
 
-// Calcula summary a partir do boletim mais recente de cada região
 export function calcSummary(data: ResultData): Summary {
   const regions = data.regions;
   const latest = (r: Region): Bulletin => r.bulletins[0];
@@ -58,7 +53,6 @@ export function calcSummary(data: ResultData): Summary {
   };
 }
 
-// Utilitários de formatação
 export const fmt = {
   number: (n: number) => n.toLocaleString('pt-BR'),
   percent: (n: number, dec = 1) => `${n.toFixed(dec)}%`,

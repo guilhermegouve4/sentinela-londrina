@@ -1,4 +1,3 @@
-// components/SummaryCard.tsx
 import React from 'react';
 
 interface SummaryCardProps {

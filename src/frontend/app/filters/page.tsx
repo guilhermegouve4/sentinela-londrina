@@ -26,7 +26,6 @@ interface LinhaTabela {
 
 type ColKey = keyof LinhaTabela;
 
-// Componente Th fora do componente principal para evitar erro do ESLint
 function Th({
   col, label, ordenar, ordem, onToggle,
 }: {
@@ -113,7 +112,6 @@ export default function Filtros() {
         <p className="text-sm text-gray-500 mt-1">Busca e filtragem por qualquer parâmetro epidemiológico</p>
       </div>
 
-      {/* Painel de filtros */}
       <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
         <div className="flex flex-wrap items-center gap-4">
           <div className="relative flex-1 min-w-48">
@@ -164,7 +162,6 @@ export default function Filtros() {
         </div>
       </div>
 
-      {/* Tabela */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">

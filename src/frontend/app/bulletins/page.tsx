@@ -12,7 +12,6 @@ export default function Boletins() {
   if (error) return <div className="p-8 text-red-600">{error}</div>;
   if (loading || !data) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
-  // Gera linhas planas de todos os boletins de todas as regiões
   const linhas = data.regions.flatMap(r =>
     r.bulletins.map(b => ({ ...b, region: r.name, status: r.status, risk: r.risk, type: r.type }))
   ).sort((a, b) => {
@@ -34,7 +33,6 @@ export default function Boletins() {
         <p className="text-sm text-gray-500 mt-1">{linhas.length} registros de {data.regions.length} regiões</p>
       </div>
 
-      {/* Filtros */}
       <div className="flex items-center gap-6 mb-6 bg-white border border-gray-200 rounded-xl p-4">
         <div className="flex items-center gap-3">
           <label className="text-sm font-medium text-gray-600">Região</label>
@@ -63,7 +61,6 @@ export default function Boletins() {
         <span className="text-sm text-gray-500 ml-auto">{filtradas.length} registros</span>
       </div>
 
-      {/* Tabela */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full">
           <thead>

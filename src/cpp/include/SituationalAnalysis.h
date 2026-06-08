@@ -2,9 +2,6 @@
 #include <string>
 #include "LinkedList.h"
 
-// risk < 10.0  → "normal"
-// risk 10-20   → "alert"
-// risk > 20.0  → "critical"
 
 struct HighestRiskRegion {
     std::string name;

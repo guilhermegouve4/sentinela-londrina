@@ -24,7 +24,6 @@ export default function Ingestao() {
     addLog("info", "Validando formato CSV...");
     await new Promise(r => setTimeout(r, 600));
 
-    // Lê o arquivo para validar de verdade
     const text = await file.text();
     const linhas = text.trim().split("\n");
     const header = linhas[0];
@@ -74,7 +73,6 @@ export default function Ingestao() {
       </div>
 
       <div className="grid grid-cols-2 gap-6">
-        {/* Drop zone */}
         <div>
           <div
             onDragOver={e => { e.preventDefault(); setDrag(true); }}
@@ -98,7 +96,6 @@ export default function Ingestao() {
             />
           </div>
 
-          {/* Status */}
           {etapa !== "idle" && (
             <div className={`mt-4 rounded-xl border p-4 ${ETAPA_COR[etapa]}`}>
               <div className="flex items-center gap-2 mb-1">
@@ -113,7 +110,6 @@ export default function Ingestao() {
             </div>
           )}
 
-          {/* Instrução do pipeline */}
           <div className="mt-4 bg-white rounded-xl border border-gray-200 p-4">
             <p className="text-xs font-medium text-gray-600 mb-3 uppercase tracking-wide">Pipeline de Ingestão</p>
             {[
@@ -131,7 +127,6 @@ export default function Ingestao() {
           </div>
         </div>
 
-        {/* Log */}
         <div>
           <div className="bg-gray-900 rounded-xl p-4 h-full min-h-64 font-mono">
             <p className="text-xs text-gray-500 mb-3">▶ Log de processamento</p>

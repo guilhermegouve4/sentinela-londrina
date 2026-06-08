@@ -17,7 +17,6 @@ export default function Evolucao() {
   if (error) return <div className="p-8 text-red-600">{error}</div>;
   if (loading || !data) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
-  // Monta série temporal: todos os meses únicos ordenados
   const todosOsMeses = Array.from(new Set(
     data.regions.flatMap(r => r.bulletins.map(b => b.month))
   )).sort((a, b) => {
@@ -46,7 +45,6 @@ export default function Evolucao() {
         <p className="text-sm text-gray-500 mt-1">Casos confirmados por região ao longo dos meses</p>
       </div>
 
-      {/* Filtro de região */}
       <div className="flex items-center gap-3 mb-6">
         <span className="text-sm text-gray-600 font-medium">Região:</span>
         {["todas", ...data.regions.map(r => r.name)].map(r => (
@@ -64,7 +62,6 @@ export default function Evolucao() {
         ))}
       </div>
 
-      {/* Gráfico */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <h2 className="text-sm font-medium text-gray-700 mb-4">Casos Confirmados por Mês</h2>
         <ResponsiveContainer width="100%" height={360}>
@@ -89,7 +86,6 @@ export default function Evolucao() {
         </ResponsiveContainer>
       </div>
 
-      {/* Tabela resumo do boletim mais recente */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
           <h2 className="text-sm font-medium text-gray-700">Último Boletim por Região</h2>

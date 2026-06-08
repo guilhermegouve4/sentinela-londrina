@@ -5,7 +5,6 @@ import { fmt, STATUS_BADGE } from "../../lib/data";
 import { useResultData } from "../../lib/use-result-data";
 import { ChevronRight, ChevronDown, Building2, MapPin, Activity } from "lucide-react";
 
-// Hierarquia estática baseada na estrutura real das regiões de Londrina
 const HIERARQUIA: Record<string, string[]> = {
   Norte:   ["UBS Ernani","UBS João Paz","UBS União da Vitória","UBS Vivi Xavier","UBS Warta"],
   Sul:     ["UBS Cafezal","UBS Cinco Conjuntos","UBS Jardim do Sol","UBS Leonor","UBS Portal do Sol"],
@@ -43,7 +42,6 @@ export default function Hierarquia() {
       </div>
 
       <div className="flex gap-6">
-        {/* Árvore */}
         <div className="w-72 flex-shrink-0">
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
@@ -85,7 +83,6 @@ export default function Hierarquia() {
           </div>
         </div>
 
-        {/* Painel de detalhes */}
         <div className="flex-1">
           {regiaoSelecionada ? (
             <div className="space-y-4">
@@ -121,7 +118,6 @@ export default function Hierarquia() {
                 </div>
               </div>
 
-              {/* UBS da região */}
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100">
                   <h3 className="text-sm font-medium text-gray-700">Unidades Básicas de Saúde — {regiaoSelecionada.name}</h3>

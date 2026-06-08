@@ -32,17 +32,14 @@ export default function VisaoGeral() {
     { label: "Dengue Grave",       value: fmt.number(summary.total_dengue_severe), icon: TrendingUp,  color: "text-purple-600",bg: "bg-purple-50"},
   ];
 
-  // Ordena regiões por risco decrescente para exibição
   const regioes = [...data.regions].sort((a, b) => b.risk - a.risk);
   const latest  = (r: typeof regioes[0]) => r.bulletins[0];
 
-  // Calcula progress_pct como % do maior risco
   const maxRisk = Math.max(...data.regions.map(r => r.risk));
   const progPct = (risk: number) => Math.round((risk / maxRisk) * 100);
 
   return (
     <div className="p-8">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-gray-900">Visão Geral das Regiões</h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -51,7 +48,6 @@ export default function VisaoGeral() {
         </p>
       </div>
 
-      {/* Cards */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         {cards.map(({ label, value, icon: Icon, color, bg }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between">
@@ -66,7 +62,6 @@ export default function VisaoGeral() {
         ))}
       </div>
 
-      {/* Tabela */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
           <h2 className="text-sm font-medium text-gray-700">Situação por Região</h2>

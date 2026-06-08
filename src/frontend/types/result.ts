@@ -1,6 +1,3 @@
-// types/result.ts
-// Schema real do result.json gerado pelo backend C++
-
 export interface Bulletin {
   month: string;
   notified: number;
@@ -29,13 +26,11 @@ export interface HighestRisk {
   risk: number;
 }
 
-// Schema real gerado pelo C++
 export interface ResultData {
   highest_risk: HighestRisk;
   regions: Region[];
 }
 
-// Summary calculado no frontend a partir dos dados reais
 export interface Summary {
   total_notified: number;
   total_confirmed: number;

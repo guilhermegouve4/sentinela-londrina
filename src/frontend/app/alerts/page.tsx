@@ -10,7 +10,6 @@ export default function Alertas() {
   if (error) return <div className="p-8 text-red-600">{error}</div>;
   if (loading || !data || !summary) return <div className="p-8 text-gray-500 flex items-center gap-2"><div className="w-4 h-4 border-2 border-t-red-500 rounded-full animate-spin"/>Carregando...</div>;
 
-  // Gera alertas dinamicamente a partir dos dados reais
   const alertas = data.regions
     .filter(r => r.status !== "normal")
     .sort((a, b) => b.risk - a.risk)
@@ -42,7 +41,6 @@ export default function Alertas() {
         <p className="text-sm text-gray-500 mt-1">Alertas epidemiológicos ativos por região — gerados automaticamente pelo sistema</p>
       </div>
 
-      {/* Contadores */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {contadores.map(({ label, value, icon: Icon, color, bg, border }) => (
           <div key={label} className={`${bg} border ${border} rounded-xl p-5 flex items-center justify-between`}>
@@ -55,7 +53,6 @@ export default function Alertas() {
         ))}
       </div>
 
-      {/* Lista de alertas ativos */}
       <div className="space-y-4">
         <h2 className="text-sm font-medium text-gray-700">Alertas Ativos ({alertas.length})</h2>
         {alertas.length === 0 ? (
@@ -97,7 +94,6 @@ export default function Alertas() {
         ))}
       </div>
 
-      {/* Tabela de todas as regiões */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mt-8">
         <div className="px-6 py-4 border-b border-gray-100">
           <h2 className="text-sm font-medium text-gray-700">Status de Todas as Regiões</h2>

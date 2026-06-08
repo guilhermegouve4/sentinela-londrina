@@ -1,4 +1,3 @@
-// components/ErrorMessage.tsx
 interface ErrorMessageProps {
   message: string;
   onRetry?: () => void;
