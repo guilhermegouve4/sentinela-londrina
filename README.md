@@ -46,8 +46,12 @@ sentinela-londrina/
 
 | Entrega | Data | Status |
 |---------|------|--------|
-| Parcial (1º bim) | 06/04/2026 | 🟡 Em andamento |
-| Final (2º bim) | 08/06/2026 | ⚪ Não iniciada |
+| Parcial (1º bim) | 06/04/2026 | ✅ Entregue |
+| Final (2º bim) | 08/06/2026 | ✅ Entregue |
+
+## Apresentação
+
+📹 [Assistir pitch de apresentação](https://drive.google.com/file/d/10VFL_HIOgi957GdXXGLAcNL5HYbS-Sw4/view?usp=sharing)
 
 ## Como rodar
 
